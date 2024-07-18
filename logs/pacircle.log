@@ -1,0 +1,507 @@
+
+
+******** <class 'pyscf.scf.rohf.ROHF'> ********
+method = ROHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /tmp/tmp_vdn_4zk
+max_memory 60000 MB (current use 188 MB)
+num. doubly occ = 56  num. singly occ = 0
+Set gradient conv threshold to 3.16228e-05
+init E= -612.101678204865
+  HOMO = -0.106889670910903  LUMO = 0.0204637467471299
+cycle= 1 E= -606.955003707267  delta_E= 5.15  |g|= 0.492  |ddm|= 5.43
+  HOMO = -0.174036054702901  LUMO = 0.163845970797688
+cycle= 2 E= -607.076935017391  delta_E= -0.122  |g|= 0.139  |ddm|= 0.716
+  HOMO = -0.190044895424601  LUMO = 0.169618366213667
+cycle= 3 E= -607.088515065342  delta_E= -0.0116  |g|= 0.0284  |ddm|= 0.267
+  HOMO = -0.190090550459843  LUMO = 0.173855713027989
+cycle= 4 E= -607.088867096766  delta_E= -0.000352  |g|= 0.00772  |ddm|= 0.0296
+  HOMO = -0.191177050687493  LUMO = 0.17562943403925
+cycle= 5 E= -607.088939123816  delta_E= -7.2e-05  |g|= 0.00116  |ddm|= 0.0196
+  HOMO = -0.191612102558263  LUMO = 0.175702146277476
+cycle= 6 E= -607.088940730139  delta_E= -1.61e-06  |g|= 0.000224  |ddm|= 0.00312
+  HOMO = -0.191603460597287  LUMO = 0.175727008193192
+cycle= 7 E= -607.088940767951  delta_E= -3.78e-08  |g|= 0.000102  |ddm|= 0.000407
+  HOMO = -0.191597132741342  LUMO = 0.175730597041324
+cycle= 8 E= -607.088940778423  delta_E= -1.05e-08  |g|= 3.89e-05  |ddm|= 0.00024
+  HOMO = -0.191596752533721  LUMO = 0.175731314035287
+cycle= 9 E= -607.088940780704  delta_E= -2.28e-09  |g|= 1.02e-05  |ddm|= 0.000139
+  HOMO = -0.191596520531561  LUMO = 0.17573210012279
+cycle= 10 E= -607.088940780858  delta_E= -1.54e-10  |g|= 1.51e-06  |ddm|= 3.99e-05
+  HOMO = -0.19159654410352  LUMO = 0.175732221413847
+Extra cycle  E= -607.088940780859  delta_E= -1.59e-12  |g|= 7.21e-07  |ddm|= 2.24e-06
+converged SCF energy = -607.088940780859
+
+******** AVAS flags ********
+aolabels = ['2py']
+ncore = 0
+minao = minao
+threshold = 0.2
+with_iao = False
+openshell_option = 2
+canonicalize = True
+
+** AVAS **
+  Total number of HF MOs  is equal to    96
+  Number of occupied HF MOs is equal to  56
+reference AO indices for minao ['2py']:
+ [ 3  9 15 21 27 33 39 45 51 57 63 69 75 81 87 93]
+Option 2: threshold 0.2
+Active from occupied = 8 , eig [0.94916549 0.95282807 0.95282807 0.96177351 0.96177351 0.97287882
+ 0.97287882 0.98030543]
+Inactive from occupied = 48
+Active from unoccupied = 8 , eig [0.98240836 0.98447373 0.98647036 0.98647036 0.98658417 0.98658417
+ 0.98867015 0.98867015]
+Inactive from unoccupied = 32
+Dimensions of active 16
+# of alpha electrons 8
+# of beta electrons 8
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748291e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.243733e-03 ; sigma = 7.105427e-15 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.348058e-04 ; sigma = 1.065814e-14 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.460282e-05 ; sigma = 3.552714e-15 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 3 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332754e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599165e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332754e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599521e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332751e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599521e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332751e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599521e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332747e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599165e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332758e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.598810e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332747e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599165e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748300e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 3.832135e-03 ; sigma = 5.381959e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 3.723526e-04 ; sigma = 2.813473e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.330059e-05 ; sigma = 2.594965e-07 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 4.161711e-06 ; sigma = 2.332751e-09 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036362e-07 ; sigma = 2.599165e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823197e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135661e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.815437e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823197e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135661e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.808331e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823197e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135625e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.811884e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823197e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135661e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.811884e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823196e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135661e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.808331e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823197e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135732e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.811884e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823196e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135661e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.808331e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.748296e-01 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 2.424774e-03 ; sigma = 4.936250e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.414293e-04 ; sigma = 1.125828e-05 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.305728e-05 ; sigma = 3.823196e-08 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.984667e-07 ; sigma = 3.135661e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 9.833404e-08 ; sigma = 1.811884e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+LASCI state-average energy = -606.878711544342
+LASCI state 0 energy = -607.215119368251
+LASCI state 1 energy = -606.864223174989
+LASCI state 2 energy = -606.864223174989
+LASCI state 3 energy = -606.864223174989
+LASCI state 4 energy = -606.864223174989
+LASCI state 5 energy = -606.864223174989
+LASCI state 6 energy = -606.864223174989
+LASCI state 7 energy = -606.864223174989
+LASCI state 8 energy = -606.864223174989
+LASCI state 9 energy = -606.851148935706
+LASCI state 10 energy = -606.851148935706
+LASCI state 11 energy = -606.851148935706
+LASCI state 12 energy = -606.851148935707
+LASCI state 13 energy = -606.851148935706
+LASCI state 14 energy = -606.851148935706
+LASCI state 15 energy = -606.851148935706
+LASCI state 16 energy = -606.851148935706
+******** LAS space tables ********
+LAS space 0: (8e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -607.215119368251
+S^2 = 0.0000000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 1: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+0e,2o)     2    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 2: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+0e,2o)     2    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 3: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+0e,2o)     2    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 4: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+0e,2o)     2    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 5: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+0e,2o)     2    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 6: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+0e,2o)     2    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 7: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+0e,2o)     2    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 8: (8e+7e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.864223174989
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+0e,2o)     2    A        1
+LAS space 9: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (2e+1e,2o)     2    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 10: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (2e+1e,2o)     2    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 11: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (2e+1e,2o)     2    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 12: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935707
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (2e+1e,2o)     2    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 13: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (2e+1e,2o)     2    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 14: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (2e+1e,2o)     2    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 15: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (2e+1e,2o)     2    A        1
+    7    (1e+1e,2o)     1    A        1
+LAS space 16: (9e+8e,16o) wfynsm=A
+Converged? True
+E(LAS) = -606.851148935706
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+    4    (1e+1e,2o)     1    A        1
+    5    (1e+1e,2o)     1    A        1
+    6    (1e+1e,2o)     1    A        1
+    7    (2e+1e,2o)     2    A        1
+LASSI op_o0 memory check: 3185.8907904000002 MB needed of 59674.908672 MB available (60000 MB max)
+Symmetry analysis of 17 LAS rootspaces:
+ ix            Energy  <S**2>  Neleca  Nelecb  Nelec   Wfnsym
+  0   -607.2151193683   0.000       8       8      16       A
+  1   -606.8642231750   0.750       8       7      15       A
+  2   -606.8642231750   0.750       8       7      15       A
+  3   -606.8642231750   0.750       8       7      15       A
+  4   -606.8642231750   0.750       8       7      15       A
+  5   -606.8642231750   0.750       8       7      15       A
+  6   -606.8642231750   0.750       8       7      15       A
+  7   -606.8642231750   0.750       8       7      15       A
+  8   -606.8642231750   0.750       8       7      15       A
+  9   -606.8511489357   0.750       9       8      17       A
+ 10   -606.8511489357   0.750       9       8      17       A
+ 11   -606.8511489357   0.750       9       8      17       A
+ 12   -606.8511489357   0.750       9       8      17       A
+ 13   -606.8511489357   0.750       9       8      17       A
+ 14   -606.8511489357   0.750       9       8      17       A
+ 15   -606.8511489357   0.750       9       8      17       A
+ 16   -606.8511489357   0.750       9       8      17       A
+Build + diag H matrix LASSI symmetry block 0
+['neleca', 'nelecb', 'irrep'] = (8, 7, 0)
+(8 rootspaces; 8 states)
+Build + diag H matrix LASSI symmetry block 1
+['neleca', 'nelecb', 'irrep'] = (8, 8, 0)
+(1 rootspaces; 1 states)
+Build + diag H matrix LASSI symmetry block 2
+['neleca', 'nelecb', 'irrep'] = (9, 8, 0)
+(8 rootspaces; 8 states)
+LASSI eigenvalues (17 total):
+ ix            Energy  <S**2>  Neleca  Nelecb  Wfnsym
+  0   -607.2151193683   0.000       8       8       A
+  1   -606.9707594178   0.750       9       8       A
+  2   -606.9660843978   0.750       8       7       A
+  3   -606.9359132359   0.750       8       7       A
+  4   -606.9359132359   0.750       8       7       A
+  5   -606.9347613583   0.750       9       8       A
+  6   -606.9347613583   0.750       9       8       A
+  7   -606.8637190215   0.750       8       7       A
+  8   -606.8637190215   0.750       8       7       A
+  9   -606.8497466231   0.750       9       8       A
+ 10   -606.8497466231   0.750       9       8       A
+ 11   -606.7925335474   0.750       8       7       A
+ 12   -606.7925335474   0.750       8       7       A
+ 13   -606.7675370256   0.750       9       8       A
+ 14   -606.7675370256   0.750       9       8       A
+ 15   -606.7633693926   0.750       8       7       A
+ 16   -606.7343420538   0.750       9       8       A
