@@ -65,9 +65,13 @@ def make_bands(hdct,reflect=True,ev=True,plot=True):
     lumo = calc_lumo(hdct,reflect=reflect,ev=ev)
     
     df = pd.DataFrame()
-    df.loc["las","homo"] = np.max(homo["energies"])
-    df.loc["las","lumo"] = np.min(lumo["energies"])
+    df.loc["LAS","IP"] = -np.max(homo["energies"])
+    df.loc["LAS","EA"] = -np.min(lumo["energies"])
+    df.loc["LAS","GAP"] = np.min(lumo["energies"]) - np.max(homo["energies"])
+    df = df.T
     
     if plot:
         plt.scatter(homo["k"],homo["energies"],label="LASSI N-1")
         plt.scatter(lumo["k"],lumo["energies"],label="LASSI N+1")
+
+    return df

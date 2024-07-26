@@ -1,9 +1,16 @@
 import numpy as np
 import pandas as pd
-from pyscf import gto, scf, lib, mcscf
 import math
 import os
+from pyscf import gto, scf, lib, mcscf
+from pyscf.mcscf import avas
+from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
+from mrh.my_pyscf.lassi import lassi
 from .hcircle import HCircle
+
+import sys
+sys.path.append('..')
+from tools import rotsym, sign_control
 
 class EthChain_CT(HCircle):
     def __init__(self,nfrags,dist=2.5,c_dist=1.4,fn="output.log"):
@@ -52,11 +59,6 @@ class EthChain_CT(HCircle):
         return mol
 
     def make_las_init_guess(self):
-        from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
-        from mrh.my_pyscf.lassi import lassi
-        from dsk.las import sign_control
-        from pyscf.mcscf import avas
-
         nfrags = self.nfrags
         mf = self.make_and_run_hf()
         mol = mf.mol

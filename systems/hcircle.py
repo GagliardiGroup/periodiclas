@@ -3,6 +3,13 @@ import pandas as pd
 from pyscf import gto, scf, lib, mcscf
 import math
 import os
+from pyscf.mcscf import avas
+from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
+from mrh.my_pyscf.lassi import lassi
+
+import sys
+sys.path.append('..')
+from tools import rotsym, sign_control
 
 class HCircle:
     def __init__(self,dist,num_h,num_h_per_frag,fn="output.log"):
@@ -64,10 +71,6 @@ class HCircle:
         return mf
 
     def make_las_init_guess(self):
-        from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
-        from mrh.my_pyscf.lassi import lassi
-        from dsk.las import sign_control
-
         mf = self.make_and_run_hf()
         mol = mf.mol
         nfrags = self.nfrags
