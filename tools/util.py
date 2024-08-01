@@ -6,6 +6,15 @@ import math
 import matplotlib.pyplot as plt
 import seaborn as sns
 from . import bandh
+import pickle
+
+def dump_pkl(obj,fn):
+    with open(fn,"wb+") as file:
+        pickle.dump(obj,file)
+        
+def load_pkl(fn):
+    with open(fn,"rb") as file:
+        return pickle.load(file)
 
 def las_charges(las):
     las_charges = [[fcisolver.charge for fcisolver in las.fciboxes[i].fcisolvers] for i in range(len(las.fciboxes))]
@@ -13,20 +22,121 @@ def las_charges(las):
     return las_charges
 
 class LASdata:
-    def __init__(self,data,pkl_fn=None):
-        energies = data["energies"]
-        civecs = data["civecs"]
-        charges = data["charges"]
+    def __init__(self,data=None,pkl_fn=None,pdft=False):
+        if data is None:
+            data = load_pkl(pkl_fn)
+        if "energies_lassi" in data.keys():
+            self.energies_lassi = data["energies_lassi"]
+        else:
+            self.energies_lassi = data["energies"]
+        if pdft:
+            self.energies_lassipdft = np.array(data["energies_lassipdft"])
+        self.civecs = data["civecs"]
+        self.charges = data["charges"]
         self.data = data
-        self.hdct = bandh.make_hdct(civecs,energies,charges)
+        self.pdft = pdft
+        #Hamiltonian
+        self.hdct = bandh.make_hdct(self.civecs,self.energies_lassi,self.charges,prnt=False)
 
     def get_homo(self):
-        e,k = bandh.calc_homo(self.hdct).values()
+        if not self.pdft:
+            e,k = bandh.calc_band(hdct=self.hdct,band_charge=1).values()
+        else:
+            e,k = bandh.calc_band(self.civecs,self.energies_lassipdft,self.charges,band_charge=1).values()
         return e,k
 
     def get_lumo(self):
-        e,k = bandh.calc_lumo(self.hdct).values()
+        if not self.pdft:
+            e,k = bandh.calc_band(hdct=self.hdct,band_charge=-1).values()
+        else:
+            e,k = bandh.calc_band(self.civecs,self.energies_lassipdft,self.charges,band_charge=-1).values()
         return e,k
+
+    def make_h(self,plot=False):
+        return bandh.make_h(self.civecs,self.energies_lassi,plot=plot)
+
+    def ip(self):
+        e,k = self.get_homo()
+        return -np.max(e)
+
+    def ea(self):
+        e,k = self.get_lumo()
+        return -np.min(e)
+
+    def make_bands(self,plot=True):
+        homo_e, homo_k = self.get_homo()
+        lumo_e, lumo_k = self.get_lumo()
+        label = "LASSI"
+        if self.pdft:
+            label = "LASSI-PDFT"
+        
+        df = pd.DataFrame()
+        df.loc[label,"IP"] = -np.max(homo_e)
+        df.loc[label,"EA"] = -np.min(lumo_e)
+        df.loc[label,"GAP"] = np.min(lumo_e) - np.max(homo_e)
+        df = df.T
+
+        if plot:
+            plt.scatter(homo_k,homo_e,label=f"{label} N-1")
+            plt.scatter(lumo_k,lumo_e,label=f"{label} N+1")
+            plt.xlabel("k$d$/2$\pi$")
+            plt.ylabel("Energy (eV)")
+        
+        return df
+
+class DMRGdata:
+    def __init__(self,csv_fn,pdft=True):
+        df = pd.read_csv(csv_fn,index_col=0)
+        self.df = df.copy()
+        if pdft:
+            energies = df["e_mcpdft"]
+        else:
+            if "e_mcscf" in df.columns.tolist():
+                energies = df["e_mcscf"]
+            else:
+                energies = df["e"]
+        hartree_to_ev = 27.2114
+        energies *= hartree_to_ev
+        self.homo = energies[0] - energies[1]
+        self.lumo = energies[-1] - energies[0]
+        print(df["dw"])
+
+    def ip(self):
+        return -self.homo
+
+    def ea(self):
+        return -self.lumo
+
+class PeriodicData: #Periodic
+    def __init__(self,csv_fn):
+        self.df = pd.read_csv(csv_fn,index_col=0)
+        self.mo_occ = self.df.loc["nocc"]
+        self.df = self.df.drop("nocc")
+        self.hartree_to_ev = 27.2114
+
+    def get_homo(self):
+        df = self.df.copy()
+        homo_idx = np.where(self.mo_occ == 2)[0][-1]
+        k = np.array(self.df.index).astype(float)
+        energies = self.df.iloc[:,homo_idx].values
+        energies *= self.hartree_to_ev
+        return energies,k
+
+    def get_lumo(self):
+        df = self.df.copy()
+        lumo_idx = np.where(self.mo_occ == 0)[0][0]
+        k = np.array(self.df.index).astype(float)
+        energies = self.df.iloc[:,lumo_idx].values
+        energies *= self.hartree_to_ev
+        return energies,k
+
+    def ip(self):
+        e,k = self.get_homo()
+        return -np.max(e)
+
+    def ea(self):
+        e,k = self.get_lumo()
+        return -np.min(e)
 
 def plot_charges(charges,labels):
     df = pd.DataFrame()
@@ -114,18 +224,5 @@ def plot_charges(charges,labels):
             ha=alignment, 
             va='center', 
             rotation=rotation, 
-            rotation_mode="anchor") 
-
-#For handling DMRG data:
-# class DMRGdata:
-#     def __init__(self,csv_fn):
-#         df = pd.read_csv(csv_fn,index_col=0)
-#         self.df = df.copy()
-#         hartree_to_ev = 27.2114
-#         df["e"] = df["e"]*hartree_to_ev
-#         self.df = df
-#         # assert((df["dw"] < 1e-10).all())
-#         self.homo = df.loc[0,"e"] - df.loc[1,"e"]
-#         self.lumo = df.loc[-1,"e"] - df.loc[0,"e"]
-#         print(df["dw"])
+            rotation_mode="anchor")
 

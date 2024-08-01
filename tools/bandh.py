@@ -13,8 +13,8 @@ def make_h(civecs_lassi,energies_lassi,plot=False,prnt=True):
         sns.heatmap(H - np.diag(np.diag(H)))
     return H
     
-def make_hdct(civecs_lassi,energies_lassi,las_charges,plot=False):
-    H = make_h(civecs_lassi,energies_lassi,plot=plot)
+def make_hdct(civecs_lassi,energies_lassi,las_charges,plot=False,prnt=True):
+    H = make_h(civecs_lassi,energies_lassi,plot=plot,prnt=prnt)
     hdct = {}
     for charge in [0,-1,1]:
         charges = np.array(las_charges).sum(axis=1)
@@ -23,8 +23,8 @@ def make_hdct(civecs_lassi,energies_lassi,las_charges,plot=False):
     return hdct
 
 def copy_bz(energies,k):
-    energies = np.hstack([energies,energies[::-1]])
-    k = np.hstack([k,k+0.5])
+    energies = np.hstack([energies,energies])
+    k = np.hstack([k,0.5 - (k-0.5)]) #reflection around 0.5
     return energies,k
 
 def calc_disp(civecs):
@@ -38,10 +38,36 @@ def calc_disp(civecs):
         avgk += [avg]
     return np.array(avgk)
 
-def calc_homo(hdct,reflect=True,ev=True):
-    energies,civecs = np.linalg.eigh(hdct[1])
-    k = calc_disp(civecs)
-    energies = hdct[0][0,0] - energies
+def calc_civecs_charges(civecs_lassi,las_charges):
+    charges = las_charges.sum(axis=1)
+    charges = (civecs_lassi**2 * charges[:,None]).sum(axis=0)
+    return np.round(charges,0)
+
+def calc_band(civecs=None,energies=None,las_charges=None,hdct=None,band_charge=1,reflect=True,ev=True):
+    #band_charge = 1 --> HOMO
+    #band_charge = -1 --> LUMO
+    assert(band_charge in [1,-1])
+    if (civecs is None) and (energies is None):
+        #Diagonalize Hamiltonian
+        #(Hamiltonian ill-defined for MC-PDFT)
+        energies,civecs = np.linalg.eigh(hdct[band_charge])
+        k = calc_disp(civecs)
+        if band_charge == 1:
+            energies = hdct[0][0,0] - energies
+        else:
+            energies = energies - hdct[0][0,0]
+    else:
+        civecs_charges = calc_civecs_charges(civecs,las_charges)
+        charges = las_charges.sum(axis=1)
+        idx = np.where(charges == band_charge)[0]
+        cols = np.where(civecs_charges == band_charge)[0]
+        gs_col = np.where(civecs_charges == 0)[0][0]
+        civecs = civecs[np.ix_(idx,cols)]
+        k = calc_disp(civecs)
+        if band_charge == 1:
+            energies = energies[gs_col] - energies[cols]
+        else:
+            energies = energies[cols] - energies[gs_col]
     if reflect:
         energies,k = copy_bz(energies,k)
     if ev:
@@ -49,29 +75,27 @@ def calc_homo(hdct,reflect=True,ev=True):
         energies *= hartree_to_ev
     return {"energies":energies,"k":k}
 
-def calc_lumo(hdct,reflect=True,ev=True):
-    energies,civecs = np.linalg.eigh(hdct[-1])
-    k = calc_disp(civecs)
-    energies = energies - hdct[0][0,0]
-    if reflect:
-        energies,k = copy_bz(energies,k)
-    if ev:
-        hartree_to_ev = 27.2114
-        energies *= hartree_to_ev
-    return {"energies":energies,"k":k}
-
-def make_bands(hdct,reflect=True,ev=True,plot=True):
-    homo = calc_homo(hdct,reflect=reflect,ev=ev)
-    lumo = calc_lumo(hdct,reflect=reflect,ev=ev)
-    
+def make_bands(civecs=None,energies=None,las_charges=None,hdct=None,reflect=True,ev=True,
+               label="LASSI",plot=True):
+    #Can take either civecs, energies, and charges OR the rootspace Hamiltonians
+    energies = np.array(energies)
+    homo = calc_band(civecs=civecs,energies=energies,las_charges=las_charges,hdct=hdct,
+                     band_charge=1,reflect=reflect,ev=ev)
+    lumo = calc_band(civecs=civecs,energies=energies,las_charges=las_charges,hdct=hdct,
+                     band_charge=-1,reflect=reflect,ev=ev)
     df = pd.DataFrame()
-    df.loc["LAS","IP"] = -np.max(homo["energies"])
-    df.loc["LAS","EA"] = -np.min(lumo["energies"])
-    df.loc["LAS","GAP"] = np.min(lumo["energies"]) - np.max(homo["energies"])
+    df.loc[label,"IP"] = -np.max(homo["energies"])
+    df.loc[label,"EA"] = -np.min(lumo["energies"])
+    df.loc[label,"GAP"] = np.min(lumo["energies"]) - np.max(homo["energies"])
     df = df.T
     
     if plot:
-        plt.scatter(homo["k"],homo["energies"],label="LASSI N-1")
-        plt.scatter(lumo["k"],lumo["energies"],label="LASSI N+1")
+        plt.scatter(homo["k"],homo["energies"],label=f"{label} N-1")
+        plt.scatter(lumo["k"],lumo["energies"],label=f"{label} N+1")
+        plt.xlabel("k$d$/2$\pi$")
+        if ev:
+            plt.ylabel("Energy (eV)")
+        else:
+            plt.ylabel("Energy (Ha)")
 
     return df

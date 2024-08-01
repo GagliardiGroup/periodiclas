@@ -13,29 +13,29 @@ sys.path.append('..')
 from tools import rotsym, sign_control
 
 class PACircle(HCircle):
-    def __init__(self,dist,ncells,n_per_frag=2,fn="output.log"):
+    def __init__(self,dist,ncells,n_per_frag=1,fn="output.log",basis="3-21g"):
         self.dist = dist
         self.ncells = ncells
+        self.basis = basis
         self.n_per_frag = n_per_frag
         assert(ncells % n_per_frag == 0)
         self.nfrags = self.ncells // self.n_per_frag
         self.fn = fn
 
-    def get_mol(self,basis="sto-3g",plot=False):
+    def get_mol(self,plot=False):
         atms = [
-        ["C", (-0.57367671, 0, 0.34338119)],
-        ["H", (-0.59785279, 0,  1.41783945)],
-        ["C", (0.59261205, 0, -0.34238682)],
-        ["H", (0.57891746, 0, -1.41883382)],            
+            ["C", (-0.5892731037811102, 0, 0.3262391909203111)],
+            ["H", (-0.5866101957855856, 0, 1.4126530286778238)],
+            ["C", (0.5916281105038108, 0, -0.3261693897255898)],
+            ["H", (0.5889652025082863, 0, -1.4125832274831025)],
         ]
-
+        
         mol = gto.Mole()
         mol.atom = atms
         mol.build()
 
-        # from dsk.las import rotsym
         mol = rotsym.rot_trans(mol,self.ncells,self.dist)
-        mol.basis = basis
+        mol.basis = self.basis
         mol.output = self.fn
         mol.verbose = lib.logger.INFO
         mol.build()
