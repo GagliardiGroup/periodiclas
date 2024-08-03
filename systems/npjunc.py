@@ -13,13 +13,14 @@ sys.path.append('..')
 from tools import rotsym, sign_control
 
 class NPJunc(HCircle):
-    def __init__(self,dist,nfrags=8,n_per_frag=1,fn="output.log"):
+    def __init__(self,dist,nfrags=8,n_per_frag=1,fn="output.log",basis="3-21g"):
         self.dist = dist
         self.nfrags = nfrags
         self.n_per_frag = n_per_frag
         self.fn = fn
+        self.basis=basis
         
-    def get_mol(self,basis="sto-3g",plot=False):
+    def get_mol(self,plot=False):
         atms = [
         ["C", (-0.57367671, 0, 0.34338119)],
         ["H", (-0.59785279, 0,  1.41783945)],
@@ -34,7 +35,7 @@ class NPJunc(HCircle):
         from dsk.las import rotsym
         n_geom = int(self.nfrags*self.n_per_frag)
         mol = rotsym.rot_trans(mol,n_geom,self.dist)
-        mol.basis = basis
+        mol.basis = self.basis
         mol.output = self.fn
         mol.verbose = lib.logger.INFO
 

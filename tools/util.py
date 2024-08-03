@@ -215,14 +215,25 @@ def plot_charges(charges,labels):
         else: 
             alignment = "left"
         rotation=0
-    
+
         # Finally add the labels
-        ax.text(
-            x=angle, 
-            y=1.1,
-            s=label, 
-            ha=alignment, 
-            va='center', 
-            rotation=rotation, 
-            rotation_mode="anchor")
+        # print(angle,label)
+        if angle in [np.pi, 2*np.pi]:
+            ax.text(
+                x=angle, 
+                y=1.2,
+                s=label, 
+                ha=alignment, 
+                va='center', 
+                rotation=rotation, 
+                rotation_mode="anchor")
+        else:
+            ax.text(
+                x=angle, 
+                y=1.1,
+                s=label, 
+                ha=alignment, 
+                va='center', 
+                rotation=rotation, 
+                rotation_mode="anchor")
 

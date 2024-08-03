@@ -42,12 +42,30 @@ def fix_sign(las):
     nfrags = len(las.ncas_sub)
     newci = [[]]*nfrags
     for frag_idx in range(nfrags):
-        for state_idx in range(len(las.ci[0])):
-            to_add = las.ci[frag_idx][state_idx]
-            idx = np.argmax(np.abs(to_add.ravel()))
-            sign = -np.sign(to_add.ravel()[idx])
-            newci[frag_idx] = newci[frag_idx] + [to_add * sign]
+        for state_idx in range(len(las.ci[0])):                 
+            to_add = las.ci[frag_idx][state_idx].copy()
+            if len(to_add.shape) == 3: #excited states
+                for civec in to_add:
+                    idx = np.argmax(np.abs(civec.ravel()))
+                    sign = -np.sign(civec.ravel()[idx])
+                    civec *= sign
+            else:
+                idx = np.argmax(np.abs(to_add.ravel()))
+                sign = -np.sign(to_add.ravel()[idx])
+                to_add *= sign
+            newci[frag_idx] = newci[frag_idx] + [to_add]
     return newci
+
+# def fix_sign(las):
+#     nfrags = len(las.ncas_sub)
+#     newci = [[]]*nfrags
+#     for frag_idx in range(nfrags):
+#         for state_idx in range(len(las.ci[0])):
+#             to_add = las.ci[frag_idx][state_idx]
+#             idx = np.argmax(np.abs(to_add.ravel()))
+#             sign = -np.sign(to_add.ravel()[idx])
+#             newci[frag_idx] = newci[frag_idx] + [to_add * sign]
+#     return newci
 
 #Look at CI vectors:
 def transci(las,las_charges,charge,plot=False):

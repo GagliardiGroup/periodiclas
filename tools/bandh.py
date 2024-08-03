@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def make_h(civecs_lassi,energies_lassi,plot=False,prnt=True):
-    H = np.zeros(civecs_lassi.shape)
-    for i in range(civecs_lassi.shape[0]):
+    H = np.zeros((civecs_lassi.shape[0],civecs_lassi.shape[0]))
+    for i in range(civecs_lassi.shape[1]):
         H += np.outer(civecs_lassi[:,i],civecs_lassi[:,i]) * energies_lassi[i]
     if prnt:
         print(np.round(np.diag(H),2))
