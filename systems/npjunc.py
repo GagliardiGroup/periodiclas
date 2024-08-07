@@ -13,12 +13,13 @@ sys.path.append('..')
 from tools import rotsym, sign_control
 
 class NPJunc(HCircle):
-    def __init__(self,dist,nfrags=8,n_per_frag=1,fn="output.log",basis="3-21g"):
+    def __init__(self,dist,nfrags=8,n_per_frag=1,fn="output.log",basis="3-21g",density_fit=False):
         self.dist = dist
         self.nfrags = nfrags
         self.n_per_frag = n_per_frag
         self.fn = fn
         self.basis=basis
+        self.density_fit = density_fit
         
     def get_mol(self,plot=False):
         atms = [

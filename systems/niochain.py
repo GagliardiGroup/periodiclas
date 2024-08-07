@@ -13,11 +13,12 @@ sys.path.append('..')
 from tools import rotsym, sign_control
 
 class NiOChain(HCircle):
-    def __init__(self,nfrags,dist=2,nio_dist=2.09,fn="output.log"):
+    def __init__(self,nfrags,dist=2,nio_dist=2.09,fn="output.log",density_fit=False):
         self.nfrags = nfrags
         self.dist = dist
         self.nio_dist = nio_dist
         self.fn = fn
+        self.density_fit = density_fit
 
     def get_mol(self,basis="minao4s",plot=False):
         #To run this you will need to put minao4s.py in your gto/basis dir

@@ -20,6 +20,7 @@ class HDMRG(HCircle):
         self.mval = mval
         self.pdft = pdft
         self.rundir = f"{self.data_name}/"
+        self.density_fit = False
 
     def make_casci(self,charge):
         mol = self.get_mol()

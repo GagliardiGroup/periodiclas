@@ -13,7 +13,7 @@ sys.path.append('..')
 from tools import rotsym, sign_control
 
 class EthChain_CT(HCircle):
-    def __init__(self,nfrags,charge=1,dist=2.5,c_dist=1.4,fn="output.log",basis="3-21g"):
+    def __init__(self,nfrags,charge=1,dist=2.5,c_dist=1.4,fn="output.log",basis="3-21g",density_fit=False):
         #charge = 1 --> hole transport
         #charge = -1 --> electron transport
         self.nfrags = nfrags
@@ -22,6 +22,7 @@ class EthChain_CT(HCircle):
         self.c_dist = c_dist
         self.fn = fn
         self.charge = charge
+        self.density_fit = density_fit
 
     def get_mol(self,plot=False):
         mol = gto.Mole()
