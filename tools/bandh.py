@@ -22,9 +22,9 @@ def make_hdct(civecs_lassi,energies_lassi,las_charges,plot=False,prnt=True):
         hdct[charge] = H[np.ix_(state_idxs,state_idxs)]
     return hdct
 
-def copy_bz(energies,k):
+def copy_bz(energies,k,sympoint=0.5):
     energies = np.hstack([energies,energies])
-    k = np.hstack([k,0.5 - (k-0.5)]) #reflection around 0.5
+    k = np.hstack([k,sympoint - (k-sympoint)]) #reflection around 0.5
     return energies,k
 
 def calc_disp(civecs):
@@ -43,9 +43,10 @@ def calc_civecs_charges(civecs_lassi,las_charges):
     charges = (civecs_lassi**2 * charges[:,None]).sum(axis=0)
     return np.round(charges,0)
 
-def calc_band(civecs=None,energies=None,las_charges=None,hdct=None,band_charge=1,reflect=True,ev=True):
+def calc_band(civecs=None,energies=None,las_charges=None,hdct=None,band_charge=1,reflect=True,ev=True,sympoint=0.5):
     #band_charge = 1 --> HOMO
     #band_charge = -1 --> LUMO
+    assert(sympoint in [0,0.5])
     assert(band_charge in [1,-1])
     if (civecs is None) and (energies is None):
         #Diagonalize Hamiltonian
@@ -69,7 +70,7 @@ def calc_band(civecs=None,energies=None,las_charges=None,hdct=None,band_charge=1
         else:
             energies = energies[cols] - energies[gs_col]
     if reflect:
-        energies,k = copy_bz(energies,k)
+        energies,k = copy_bz(energies,k,sympoint=sympoint)
     if ev:
         hartree_to_ev = 27.2114
         energies *= hartree_to_ev

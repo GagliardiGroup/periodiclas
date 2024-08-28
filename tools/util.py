@@ -22,39 +22,75 @@ def las_charges(las):
     return las_charges
 
 class LASdata:
-    def __init__(self,data=None,pkl_fn=None,pdft=False):
+    def __init__(self,data=None,pkl_fn=None,pct_pdft=0.75):
+        assert(pct_pdft in [1,0.5,0.75,0]) #0.75 --> tPBE0
         if data is None:
             data = load_pkl(pkl_fn)
         if "energies_lassi" in data.keys():
             self.energies_lassi = data["energies_lassi"]
         else:
             self.energies_lassi = data["energies"]
-        if pdft:
+        if "energies_lassipdft" in data.keys():
             self.energies_lassipdft = np.array(data["energies_lassipdft"])
+        else:
+            hpdft = 0
         self.civecs = data["civecs"]
         self.charges = data["charges"]
+        self.mo_coeff = data["mf_coeff"]
         self.data = data
-        self.pdft = pdft
+        self.pct_pdft = pct_pdft
+        self.hartree_to_ev = 27.2114
         #Hamiltonian
         self.hdct = bandh.make_hdct(self.civecs,self.energies_lassi,self.charges,prnt=False)
-
-    def get_homo(self):
-        if not self.pdft:
-            e,k = bandh.calc_band(hdct=self.hdct,band_charge=1).values()
+        self.diag_then_perturb = True
+        if "civecs_pdft" in data.keys():
+            self.civecs_pdft = data["civecs_pdft"]
+            self.diag_then_perturb = False
+            self.hdct_pdft = bandh.make_hdct(self.civecs_pdft,self.energies_lassipdft,self.charges,prnt=False)
         else:
-            e,k = bandh.calc_band(self.civecs,self.energies_lassipdft,self.charges,band_charge=1).values()
-        return e,k
+            self.civecs_pdft = None
 
-    def get_lumo(self):
-        if not self.pdft:
-            e,k = bandh.calc_band(hdct=self.hdct,band_charge=-1).values()
+    def make_band(self,q,sympoint=0.5):
+        ecas,k = bandh.calc_band(hdct=self.hdct,band_charge=q,sympoint=sympoint).values()
+        if self.diag_then_perturb:
+            if self.pct_pdft != 0:
+                epdft,k = bandh.calc_band(self.civecs,self.energies_lassipdft,
+                                          self.charges,band_charge=q,sympoint=sympoint).values()
+                e = self.pct_pdft*epdft + (1-self.pct_pdft)*ecas
+            else:
+                e = ecas
         else:
-            e,k = bandh.calc_band(self.civecs,self.energies_lassipdft,self.charges,band_charge=-1).values()
+            hdct = self.hdct
+            hdct_pdft = self.hdct_pdft
+            hdct_hpdft = {}
+            for k in hdct.keys():
+                hdct_hpdft[k] = self.pct_pdft*hdct_pdft[k] + (1-self.pct_pdft)*hdct[k]
+            e,k = bandh.calc_band(hdct=hdct_hpdft,band_charge=q,sympoint=sympoint).values()
         return e,k
-
-    def make_h(self,plot=False):
-        return bandh.make_h(self.civecs,self.energies_lassi,plot=plot)
-
+    
+    def get_homo(self,sympoint=0.5):
+        return self.make_band(1,sympoint=sympoint)
+            
+    def get_lumo(self,sympoint=0.5):
+        return self.make_band(-1,sympoint=sympoint)
+        
+    def plot_h(self,pdft=False,nodiag=False,minval=-10):
+        if pdft:
+            if self.civecs_pdft is not None:
+                H = bandh.make_h(self.civecs_pdft,self.energies_lassipdft,plot=False)
+            else:
+                H = bandh.make_h(self.civecs,self.energies_lassipdft,plot=False)
+        else:
+            H = bandh.make_h(self.civecs,self.energies_lassi,plot=False)
+        if nodiag:
+            sns.heatmap(H - np.diag(np.diag(H)),cbar_kws={'label': "$H_{ij}$"})
+        else:
+            for i in range(H.shape[0]):
+                H[i][np.where(H[i] != 0)] = np.log10(np.abs(H[i][np.where(H[i] != 0)]))
+                H[i][np.where(H[i] < minval)] = minval #minimum shown value
+                H[i][np.where(H[i] == 0)] = minval #arbitrary
+            sns.heatmap(H,cbar_kws={'label': "$\log_{10}(|H_{ij}|)$"})
+        
     def ip(self):
         e,k = self.get_homo()
         return -np.max(e)
@@ -63,12 +99,48 @@ class LASdata:
         e,k = self.get_lumo()
         return -np.min(e)
 
-    def make_bands(self,plot=True):
-        homo_e, homo_k = self.get_homo()
-        lumo_e, lumo_k = self.get_lumo()
-        label = "LASSI"
-        if self.pdft:
-            label = "LASSI-PDFT"
+    def hwidth(self):
+        e,k = self.get_homo()
+        return np.max(e) - np.min(e)
+
+    def lwidth(self):
+        e,k = self.get_lumo()
+        return np.max(e) - np.min(e)
+
+    def finite_dif_2div(self,e,k,prnt=True):
+        e = e[np.argsort(k)]
+        k = np.sort(k)
+        idx2 = len(k)//2
+        idx1 = idx2-2
+        idx3 = idx2+1
+        if prnt:
+            print(np.round(k[[idx1,idx2,idx3]],4))
+        num = e[idx3] + e[idx1] - 2*e[idx2]
+        denom = (k[idx3] - k[idx2])**2
+        num *= 1/self.hartree_to_ev
+        return num/denom
+
+    def lmass(self,prnt=False):
+        e,k = self.get_lumo()
+        div = self.finite_dif_2div(e,k,prnt=prnt)
+        return 1/div
+
+    def hmass(self,prnt=False):
+        e,k = self.get_homo()
+        div = self.finite_dif_2div(e,k,prnt=prnt)
+        return 1/div
+
+    def make_bands(self,plot=True,sympoint=0.5):
+        homo_e, homo_k = self.get_homo(sympoint=sympoint)
+        lumo_e, lumo_k = self.get_lumo(sympoint=sympoint)
+        if self.pct_pdft == 1:
+            label = "LASSI-tPBE"
+        elif self.pct_pdft == 0.75:
+            label = "LASSI-tPBE0"
+        elif self.pct_pdft == 0:
+            label = "LASSI"
+        else:
+            label = f"LASSI-{self.pct_pdft}tPBE"
         
         df = pd.DataFrame()
         df.loc[label,"IP"] = -np.max(homo_e)
@@ -82,19 +154,22 @@ class LASdata:
             plt.xlabel("k$d$/2$\pi$")
             plt.ylabel("Energy (eV)")
         
-        return df
+        return np.round(df,2)
 
 class DMRGdata:
-    def __init__(self,csv_fn,pdft=True):
+    def __init__(self,csv_fn,pct_pdft=0):
+        assert(pct_pdft in [1,0.5,0.75,0]) #0.75 --> tPBE0
         df = pd.read_csv(csv_fn,index_col=0)
         self.df = df.copy()
-        if pdft:
-            energies = df["e_mcpdft"]
+        if "e_mcscf" in df.columns.tolist():
+            ecas = df["e_mcscf"]
         else:
-            if "e_mcscf" in df.columns.tolist():
-                energies = df["e_mcscf"]
-            else:
-                energies = df["e"]
+            ecas = df["e"]
+        if pct_pdft > 0:
+            epdft = df["e_mcpdft"]
+            energies = pct_pdft*epdft + (1-pct_pdft)*ecas
+        else:
+            energies = ecas
         hartree_to_ev = 27.2114
         energies *= hartree_to_ev
         self.homo = energies[0] - energies[1]
@@ -115,18 +190,16 @@ class PeriodicData: #Periodic
         self.hartree_to_ev = 27.2114
 
     def get_homo(self):
-        df = self.df.copy()
         homo_idx = np.where(self.mo_occ == 2)[0][-1]
         k = np.array(self.df.index).astype(float)
-        energies = self.df.iloc[:,homo_idx].values
+        energies = self.df.iloc[:,homo_idx].values.copy()
         energies *= self.hartree_to_ev
         return energies,k
 
     def get_lumo(self):
-        df = self.df.copy()
         lumo_idx = np.where(self.mo_occ == 0)[0][0]
         k = np.array(self.df.index).astype(float)
-        energies = self.df.iloc[:,lumo_idx].values
+        energies = self.df.iloc[:,lumo_idx].values.copy()
         energies *= self.hartree_to_ev
         return energies,k
 
@@ -137,6 +210,37 @@ class PeriodicData: #Periodic
     def ea(self):
         e,k = self.get_lumo()
         return -np.min(e)
+
+    def hwidth(self):
+        e,k = self.get_homo()
+        return np.max(e) - np.min(e)
+
+    def lwidth(self):
+        e,k = self.get_lumo()
+        return np.max(e) - np.min(e)
+
+    def finite_dif_2div(self,e,k,prnt=True):
+        e = e[np.argsort(k)]
+        k = np.sort(k)
+        idx2 = len(k)//2
+        idx1 = idx2-1
+        idx3 = idx2+1
+        if prnt:
+            print(np.round(k[[idx1,idx2,idx3]],4))
+        num = e[idx3] + e[idx1] - 2*e[idx2]
+        denom = (k[idx3] - k[idx2])**2
+        num *= 1/self.hartree_to_ev
+        return num/denom
+
+    def lmass(self,prnt=False):
+        e,k = self.get_lumo()
+        div = self.finite_dif_2div(e,k,prnt=prnt)
+        return 1/div
+
+    def hmass(self,prnt=False):
+        e,k = self.get_homo()
+        div = self.finite_dif_2div(e,k,prnt=prnt)
+        return 1/div
 
 def plot_charges(charges,labels):
     df = pd.DataFrame()
