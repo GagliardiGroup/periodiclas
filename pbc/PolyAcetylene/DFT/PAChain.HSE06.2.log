@@ -1,0 +1,397 @@
+#INFO: **** input file is /project/lgagliardi/jangidbhavnesh/Re/Final/PolyAcetyleneChain/DFT/PAChain.DFT.py ****
+import sys
+import os
+import pickle
+import numpy as np
+import pandas as pd
+from pyscf.pbc import scf, df
+from pyscf.pbc import gto as pgto
+from pyscf import mcscf, dmrgscf, lib
+
+def get_xyz(nU=1, d= 2.47, nR=1):
+    coords = [
+    ("C", -0.5892731038,  0.3262391909,  0.0),
+    ("H", -0.5866101958,  1.4126530287,  0.0),
+    ("C",  0.5916281105, -0.3261693897,  0.0),
+    ("H",  0.5889652025, -1.4125832275,  0.0)]
+
+    nU *=nR
+
+    translated_coords = []
+    for t in range(int(nU)):
+        shift = t * d
+        translated_coords.extend([(elem, x + shift, y, z)
+            for elem, x, y, z in coords])
+    return translated_coords
+
+
+def getCell(nC, nU=1, d=2.47, XC='PBE', maxMem=500000, basis='321G',pseudo=None):
+    """
+    Build the Cell object
+    """
+    nR = nC/2
+    cell = pgto.Cell()
+    cell.atom = get_xyz(nU, d, nR=nR)
+    cell.a = np.diag([2.47*nR*nU, 17.5, 17.5])
+    cell.basis = basis
+    cell.pseudo = pseudo
+    cell.dimension = 1
+    cell.precision=1e-12
+    cell.verbose = lib.logger.INFO
+    cell.max_memory = maxMem
+    cell.output = f"PAChain.{XC}.{nC}.log"
+    cell.build()
+    return cell
+
+def get_gdf(cell, filename, kpts=[1,1,1], restart=True):
+    """
+    Calculate the 2e Integrals
+    Using the Gaussian Density Fitting.
+    """
+    if not os.path.exists(filename) or restart:
+        gdf = df.GDF(cell, kpts=kpts)
+        gdf._cderi_to_save = filename
+        gdf._j_only = False
+        gdf.build()
+    return filename
+
+def runDFT(cell, nC, nkpts, XC='PBE'):
+    """
+    Mean-Field Calculation
+    """
+
+    if not XC == 'HF':
+        from pyscf.pbc import dft
+        kmf = dft.KRKS(cell, xc=XC).density_fit()
+    else:
+        kmf = scf.KRHF(cell).density_fit()
+
+    kmf.max_cycle=50
+    kmf.kpts = cell.make_kpts([nkpts, 1,1])
+    kmf.chkfile = f'PAChain.{XC}.{nC}.chk'
+    kmf.with_df._cderi = get_gdf(cell, kmf.chkfile.rstrip('.chk')+'.h5', kpts = kmf.kpts)
+    #kmf.with_df._j_only = False
+    kmf.exxdiv = None
+    kmf.conv_tol = 1e-12
+    kmf.kernel()
+
+    if not kmf.converged:
+        kmf.newton().run()
+
+    assert kmf, "mean-field didn't converge"
+    return kmf
+
+
+def get_bands(cell, kmf, nkpts, R=2.47):
+    '''
+    For the converged kmf, get the band structure at kpts
+    '''
+    kpts = kmf.kpts
+    energies, mos = kmf.get_bands(kpts)
+    energies = np.vstack(energies)
+    kptsnorm = np.arange(nkpts)/nkpts 
+
+    kptsnorm = np.hstack([kptsnorm, np.array(1)]) #append gamma at end
+
+    df = pd.DataFrame()
+    for i in range(energies.shape[1]):
+        e_band = energies[:,i]
+        e_band = np.hstack([e_band,np.array(e_band[0])])
+        for k, e in zip(kptsnorm,e_band):
+            df.loc[k,i] = e
+        df.loc["nocc",i] = kmf.mo_occ[0][i]
+    return df
+
+class PeriodicDataAnalysis:
+    '''
+    Some functions to analyze the periodic DFT data
+    '''
+    def __init__(self, nC, XC, df):
+        self.df = df
+        self.nC = nC
+        self.XC = XC
+        self.mo_occ = self.df.loc["nocc"]
+        self.df = self.df.drop("nocc")
+        self.hartree_to_ev = 27.21139
+
+    def get_homo(self):
+        df = self.df.copy()
+        homo_idx = np.where(self.mo_occ == 2)[0][-1]
+        k = np.array(self.df.index).astype(float)
+        energies = self.df.iloc[:,homo_idx].values
+        energies *= self.hartree_to_ev
+        return energies,k
+
+    def get_lumo(self):
+        df = self.df.copy()
+        lumo_idx = np.where(self.mo_occ == 0)[0][0]
+        k = np.array(self.df.index).astype(float)
+        energies = self.df.iloc[:,lumo_idx].values
+        energies *= self.hartree_to_ev
+        return energies,k
+
+    def savepickel(self):
+        """
+        Save the LAS Band Structure Data
+        """
+        nC = self.nC
+        XC = self.XC
+        homo_e, homo_k = self.get_homo()
+        lumo_e, lumo_k = self.get_lumo()
+        data = {'nC':nC,
+                'XC':XC,
+                'homo_e':homo_e,
+                'homo_k':homo_k,
+                'lumo_e':lumo_e,
+                'lumo_k':lumo_k, 
+                'bandgap': -lumo_e.min() + homo_e.max()
+                }
+
+        with open(f"hchain.{XC}.{nC}.pkl", "wb") as f:
+            pickle.dump(data, f)
+
+if __name__ == "__main__":
+    nC = 2
+    for XC in ['HSE06', ]: 
+        d = 2.47
+        nkpts = 16
+        cell =  getCell(nC, nU=1, d=d, XC=XC, maxMem=450000, basis='3-21G')
+        kmf = runDFT(cell, nC, nkpts, XC=XC)
+        data = get_bands(cell, kmf, nkpts, R=d)
+        
+        # Save the data
+        PeriodicDataAnalysis(nC, XC, data).savepickel()
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='midway3-0542.rcc.local', release='4.18.0-305.3.1.el8.x86_64', version='#1 SMP Tue Jun 1 16:14:33 UTC 2021', machine='x86_64')  Threads 128
+Python 3.9.13 (main, Aug 25 2022, 23:26:10) 
+[GCC 11.2.0]
+numpy 1.26.2  scipy 1.11.4  h5py 3.10.0
+Date: Tue Mar 11 13:16:41 2025
+PySCF version 2.8.0
+PySCF path  /home/jangidbhavnesh/bin/pyscf
+GIT ORIG_HEAD a0665c4a7bf54e33f01295b3eea390be7a17d76d
+GIT HEAD (branch master) 6f6d3741bf42543e02ccaa1d4ef43d9bf83b3dda
+
+[ENV] PYSCF_EXT_PATH /home/jangidbhavnesh/bin/pyscf:/home/jangidbhavnesh/bin/pyscf-forge:/home/jangidbhavnesh/bin/dmrgscf:/home/jangidbhavnesh/bin:
+[CONFIG] conf_file /home/jangidbhavnesh/.pyscf_conf.py
+[INPUT] verbose = 4
+[INPUT] num. atoms = 4
+[INPUT] num. electrons = 14
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 C     -0.589273103800   0.326239190900   0.000000000000 AA   -1.113564778754   0.616502721901   0.000000000000 Bohr   0.0
+[INPUT]  2 H     -0.586610195800   1.412653028700   0.000000000000 AA   -1.108532611939   2.669527333280   0.000000000000 Bohr   0.0
+[INPUT]  3 C      0.591628110500  -0.326169389700   0.000000000000 AA    1.118015096439  -0.616370816750   0.000000000000 Bohr   0.0
+[INPUT]  4 H      0.588965202500  -1.412583227500   0.000000000000 AA    1.112982929624  -2.669395428129   0.000000000000 Bohr   0.0
+
+nuclear repulsion = 747.848713206127
+number of shells = 14
+number of NR pGTOs = 36
+number of NR cGTOs = 22
+basis = 3-21G
+ecp = {}
+CPU time:        24.78
+lattice vectors  a1 [4.667623528, 0.000000000, 0.000000000]
+                 a2 [0.000000000, 33.070207180, 0.000000000]
+                 a3 [0.000000000, 0.000000000, 33.070207180]
+dimension = 1
+low_dim_ft_type = None
+Cell volume = 5104.69
+rcut = 20.04810639385171 (nimgs = [5 0 0])
+lattice sum = 9 cells
+precision = 1e-12
+pseudo = None
+ke_cutoff = 20215.295844348162
+    = [301  64  64] mesh (1232896 PWs)
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = None
+_cderi_to_save = PAChain.HSE06.2.h5
+len(kpts) = 16
+Default auxbasis def2-svp-jkfit is used for H 3-21G
+Default auxbasis def2-svp-jkfit is used for C 3-21G
+Drop 0 primitive fitting functions
+make aux basis, num shells = 62, num cGTOs = 186
+auxcell.rcut 24.28800816642883
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [ 7 64 64] (28672 PWs)
+ke_cutoff = 8.154185930038329
+omega = 0.30834707410234635
+exclude_d_aux = True
+exclude_dd_block = False
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.dft.krks.KRKS'> ********
+method = KRKS
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-12
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = PAChain.HSE06.2.chk
+max_memory 450000 MB (current use 855 MB)
+
+
+******** PBC SCF flags ********
+N kpts = 16
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7fbece717880>
+XC functionals = HSE06
+small_rho_cutoff = 1e-07
+radial grids: 
+    Treutler-Ahlrichs [JCP 102, 346 (1995); DOI:10.1063/1.469408] (M4) radial grids
+    
+becke partition: Becke, JCP 88, 2547 (1988); DOI:10.1063/1.454033
+pruning grids: <function nwchem_prune at 0x7fbed5f61a60>
+grids dens level: 3
+symmetrized grids: False
+atomic radii adjust function: <function treutler_atomic_radii_adjust at 0x7fbed5f41430>
+Set gradient conv threshold to 1e-06
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [ 9 64 64] (36864 PWs)
+ke_cutoff = 14.496330542290359
+omega = 0.43120453093153466
+exclude_d_aux = False
+exclude_dd_block = False
+j2c_eig_always = False
+has_long_range = True
+tot grids = 47809
+cell vol = 5104.69327  sum(weights) = 3883.52939
+nelec by numeric integration = 13.999980674013193
+Create RSH-DF object <pyscf.pbc.df.df.GDF object at 0x7fbece717fd0> for omega=-0.11
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = None
+_cderi_to_save = /tmp/jobs/29123401/tmp02enlssh
+len(kpts) = 16
+Default auxbasis def2-svp-jkfit is used for H 3-21G
+Default auxbasis def2-svp-jkfit is used for C 3-21G
+Drop 0 primitive fitting functions
+make aux basis, num shells = 62, num cGTOs = 186
+auxcell.rcut 24.28800816642883
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [ 5 64 64] (20480 PWs)
+ke_cutoff = 0.9255389801949769
+omega = 0.11
+exclude_d_aux = True
+exclude_dd_block = False
+j2c_eig_always = False
+has_long_range = True
+init E= -77.2353486158461
+HOMO = -0.230775842078  LUMO = -0.230775842078
+
+WARN: HOMO -0.230775842078 == LUMO -0.230775842078
+
+nelec by numeric integration = 14.000000935446014
+cycle= 1 E= -76.8861666777267  delta_E= 0.349  |g|= 2.59  |ddm|=  189
+HOMO = -0.275068075619  LUMO = -0.26076039649
+nelec by numeric integration = 14.000003225354359
+cycle= 2 E= -77.4682696861796  delta_E= -0.582  |g|= 7.98  |ddm|=  505
+HOMO = -0.347113105503  LUMO = -0.345549776802
+nelec by numeric integration = 14.000001832717464
+cycle= 3 E= -79.1996500332963  delta_E= -1.73  |g|=   12  |ddm|=  270
+HOMO = -0.339991238717  LUMO = -0.339930937929
+
+WARN: HOMO -0.339991238717 == LUMO -0.339930937929
+
+nelec by numeric integration = 14.000001176334345
+cycle= 4 E= -79.2231767383038  delta_E= -0.0235  |g|= 14.6  |ddm|=  238
+HOMO = -0.342046337749  LUMO = -0.318337802583
+nelec by numeric integration = 14.000001105683562
+cycle= 5 E= -78.4182245770643  delta_E= 0.805  |g|= 13.1  |ddm|=  197
+HOMO = -0.34207876021  LUMO = -0.318367605062
+nelec by numeric integration = 14.000001110626663
+cycle= 6 E= -78.4301259687314  delta_E= -0.0119  |g|= 13.1  |ddm|= 2.64
+HOMO = -0.342195850928  LUMO = -0.319104183875
+nelec by numeric integration = 14.000001740133024
+cycle= 7 E= -78.9595326409478  delta_E= -0.529  |g|=   13  |ddm|=  293
+HOMO = -0.343568963359  LUMO = -0.319804265226
+nelec by numeric integration = 14.000001845915989
+cycle= 8 E= -79.0203246434988  delta_E= -0.0608  |g|=   13  |ddm|= 21.8
+HOMO = -0.318498660806  LUMO = -0.314933851727
+nelec by numeric integration = 14.000002354525707
+cycle= 9 E= -78.5252050367947  delta_E= 0.495  |g|=   12  |ddm|=  206
+HOMO = -0.368966897662  LUMO = -0.368648233215
+
+WARN: HOMO -0.368966897662 == LUMO -0.368648233215
+
+nelec by numeric integration = 14.000001616384033
+cycle= 10 E= -79.8958822588573  delta_E= -1.37  |g|= 9.93  |ddm|=  428
+HOMO = -0.430721156823  LUMO = -0.429154998731
+nelec by numeric integration = 14.00000863379248
+cycle= 11 E= -81.5215036891364  delta_E= -1.63  |g|= 2.61  |ddm|=  305
+HOMO = -0.442393250817  LUMO = -0.440266813237
+nelec by numeric integration = 14.000008589651719
+cycle= 12 E= -82.2000477926721  delta_E= -0.679  |g|= 2.76  |ddm|=  245
+HOMO = -0.459712892576  LUMO = -0.456887463093
+nelec by numeric integration = 14.000009367714798
+cycle= 13 E= -82.2215631559923  delta_E= -0.0215  |g|= 0.965  |ddm|= 13.2
+HOMO = -0.461771101898  LUMO = -0.461128251738
+
+WARN: HOMO -0.461771101898 == LUMO -0.461128251738
+
+nelec by numeric integration = 14.000008409848581
+cycle= 14 E= -82.2292543877292  delta_E= -0.00769  |g|= 0.394  |ddm|=  267
+HOMO = -0.479432702087  LUMO = -0.47786072225
+nelec by numeric integration = 14.000009136940468
+cycle= 15 E= -82.2321276590217  delta_E= -0.00287  |g|= 0.12  |ddm|= 7.36
+HOMO = -0.478393296864  LUMO = -0.473236366591
+nelec by numeric integration = 14.000009013388182
+cycle= 16 E= -82.2323807256586  delta_E= -0.000253  |g|= 0.0273  |ddm|= 4.03
+HOMO = -0.480725131927  LUMO = -0.474321564042
+nelec by numeric integration = 14.000009002907875
+cycle= 17 E= -82.2323935520654  delta_E= -1.28e-05  |g|= 0.00468  |ddm|= 0.503
+HOMO = -0.480749884027  LUMO = -0.474078876483
+nelec by numeric integration = 14.000009003358027
+cycle= 18 E= -82.2323939773459  delta_E= -4.25e-07  |g|= 0.00121  |ddm|= 0.0562
+HOMO = -0.480794499634  LUMO = -0.474091257049
+nelec by numeric integration = 14.000009004355022
+cycle= 19 E= -82.2323939612672  delta_E= 1.61e-08  |g|= 0.000112  |ddm|= 0.00708
+HOMO = -0.480797407613  LUMO = -0.474089956806
+nelec by numeric integration = 14.000009004448783
+cycle= 20 E= -82.2323939615349  delta_E= -2.68e-10  |g|= 4.93e-06  |ddm|= 0.00139
+HOMO = -0.480797490109  LUMO = -0.474089984652
+nelec by numeric integration = 14.000009004450908
+cycle= 21 E= -82.2323939615346  delta_E= 2.27e-13  |g|= 5.5e-06  |ddm|= 9.65e-05
+HOMO = -0.480797499373  LUMO = -0.474089986433
+nelec by numeric integration = 14.000009004451487
+cycle= 22 E= -82.2323939615351  delta_E= -4.55e-13  |g|= 7.09e-08  |ddm|= 4.84e-05
+HOMO = -0.480797493907  LUMO = -0.474089982557
+nelec by numeric integration = 14.000009004451444
+Extra cycle  E= -82.2323939615369  delta_E= -1.82e-12  |g|= 6.71e-08  |ddm|= 1.48e-06
+converged SCF energy = -82.2323939615369
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [ 9 64 64] (36864 PWs)
+ke_cutoff = 14.496330542290359
+omega = 0.43120453093153466
+exclude_d_aux = False
+exclude_dd_block = False
+j2c_eig_always = False
+has_long_range = True
+nelec by numeric integration = 14.000009004451444

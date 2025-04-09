@@ -1,0 +1,488 @@
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_1.5.chk. Use MINAO initial guess
+output file: NiO_1.5.log
+tot grids = 135652
+cell vol = 182.205031  sum(weights) = 182.487126
+tot grids = 135652
+cell vol = 182.205031  sum(weights) = 182.487126
+tot grids = 135652
+cell vol = 182.205031  sum(weights) = 182.487126
+tot grids = 135652
+cell vol = 182.205031  sum(weights) = 182.487126
+tot grids = 135652
+cell vol = 182.205031  sum(weights) = 182.487126
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_1.6.chk. Use MINAO initial guess
+Results: LASSI 
+Ionization Energy:  -54.4176163402265
+ElectAtt   Energy:  -54.97300138789448
+Band Gap:  0.5553850476679756
+Results: PDFT
+Ionization Energy:  -47.851041820096476
+ElectAtt   Energy:  -47.91902071346275
+Band Gap:  0.0679788933662735
+output file: NiO_1.6.log
+tot grids = 136332
+cell vol = 221.129425  sum(weights) = 221.450299
+tot grids = 136332
+cell vol = 221.129425  sum(weights) = 221.450299
+tot grids = 136332
+cell vol = 221.129425  sum(weights) = 221.450299
+tot grids = 136332
+cell vol = 221.129425  sum(weights) = 221.450299
+tot grids = 136332
+cell vol = 221.129425  sum(weights) = 221.450299
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_1.7000000000000002.chk. Use MINAO initial guess
+Results: LASSI 
+Ionization Energy:  -43.15734660666766
+ElectAtt   Energy:  -48.62045203401301
+Band Gap:  5.463105427345354
+Results: PDFT
+Ionization Energy:  -38.943716014216456
+ElectAtt   Energy:  -38.16180057974065
+Band Gap:  -0.7819154344758061
+output file: NiO_1.7000000000000002.log
+tot grids = 136874
+cell vol = 265.236539  sum(weights) = 265.606264
+tot grids = 136874
+cell vol = 265.236539  sum(weights) = 265.606264
+tot grids = 136874
+cell vol = 265.236539  sum(weights) = 265.606264
+tot grids = 136874
+cell vol = 265.236539  sum(weights) = 265.606264
+tot grids = 136874
+cell vol = 265.236539  sum(weights) = 265.606264
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_1.8000000000000003.chk. Use MINAO initial guess
+Results: LASSI 
+Ionization Energy:  -34.61803028404963
+ElectAtt   Energy:  -40.52137324126485
+Band Gap:  5.903342957215216
+Results: PDFT
+Ionization Energy:  -31.383498152867297
+ElectAtt   Energy:  -31.484938516614775
+Band Gap:  0.10144036374747856
+output file: NiO_1.8000000000000003.log
+tot grids = 137184
+cell vol = 314.850294  sum(weights) = 315.282384
+tot grids = 137184
+cell vol = 314.850294  sum(weights) = 315.282384
+tot grids = 137184
+cell vol = 314.850294  sum(weights) = 315.282384
+tot grids = 137184
+cell vol = 314.850294  sum(weights) = 315.282384
+tot grids = 137184
+cell vol = 314.850294  sum(weights) = 315.282384
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_1.9000000000000004.chk. Use MINAO initial guess
+WARN: HOMO 1.29391016096126 >= LUMO 1.29391016096929
+Results: LASSI 
+Ionization Energy:  -28.35158294923753
+ElectAtt   Energy:  -34.65109469052209
+Band Gap:  6.299511741284562
+Results: PDFT
+Ionization Energy:  -23.94538708302828
+ElectAtt   Energy:  -25.190667603088944
+Band Gap:  1.245280520060664
+output file: NiO_1.9000000000000004.log
+tot grids = 137718
+cell vol = 370.29461  sum(weights) = 370.801216
+tot grids = 137718
+cell vol = 370.29461  sum(weights) = 370.801216
+tot grids = 137718
+cell vol = 370.29461  sum(weights) = 370.801216
+tot grids = 137718
+cell vol = 370.29461  sum(weights) = 370.801216
+tot grids = 137718
+cell vol = 370.29461  sum(weights) = 370.801216
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.0000000000000004.chk. Use MINAO initial guess
+WARN: HOMO 1.16261927066473 >= LUMO 1.16261927066656
+Results: LASSI 
+Ionization Energy:  -23.71699543868727
+ElectAtt   Energy:  -29.306990937404827
+Band Gap:  5.589995498717556
+Results: PDFT
+Ionization Energy:  -19.942441401683805
+ElectAtt   Energy:  -21.046990986867826
+Band Gap:  1.1045495851840208
+output file: NiO_2.0000000000000004.log
+tot grids = 137756
+cell vol = 431.893408  sum(weights) = 432.482948
+tot grids = 137756
+cell vol = 431.893408  sum(weights) = 432.482948
+tot grids = 137756
+cell vol = 431.893408  sum(weights) = 432.482948
+tot grids = 137756
+cell vol = 431.893408  sum(weights) = 432.482948
+tot grids = 137756
+cell vol = 431.893408  sum(weights) = 432.482948
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.1000000000000005.chk. Use MINAO initial guess
+WARN: HOMO 1.05141714958692 >= LUMO 1.05141714959837
+Results: LASSI 
+Ionization Energy:  -19.098855890575678
+ElectAtt   Energy:  -26.134702191754837
+Band Gap:  7.035846301179159
+Results: PDFT
+Ionization Energy:  -16.10878749310812
+ElectAtt   Energy:  -17.143304671195217
+Band Gap:  1.0345171780870963
+output file: NiO_2.1000000000000005.log
+tot grids = 137832
+cell vol = 499.970606  sum(weights) = 500.650774
+tot grids = 137832
+cell vol = 499.970606  sum(weights) = 500.650774
+tot grids = 137832
+cell vol = 499.970606  sum(weights) = 500.650774
+tot grids = 137832
+cell vol = 499.970606  sum(weights) = 500.650774
+tot grids = 137832
+cell vol = 499.970606  sum(weights) = 500.650774
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.2000000000000006.chk. Use MINAO initial guess
+WARN: HOMO 0.954654703732535 >= LUMO 0.954654703733371
+Results: LASSI 
+Ionization Energy:  -15.601681267820515
+ElectAtt   Energy:  -23.2080143139411
+Band Gap:  7.606333046120584
+Results: PDFT
+Ionization Energy:  -11.843250268985932
+ElectAtt   Energy:  -15.85439952843729
+Band Gap:  4.011149259451358
+output file: NiO_2.2000000000000006.log
+tot grids = 138128
+cell vol = 574.850126  sum(weights) = 575.635019
+tot grids = 138128
+cell vol = 574.850126  sum(weights) = 575.635019
+tot grids = 138128
+cell vol = 574.850126  sum(weights) = 575.635019
+tot grids = 138128
+cell vol = 574.850126  sum(weights) = 575.635019
+tot grids = 138128
+cell vol = 574.850126  sum(weights) = 575.635019
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.3000000000000007.chk. Use MINAO initial guess
+WARN: HOMO 0.874159719074275 >= LUMO 0.874159719074376
+Results: LASSI 
+Ionization Energy:  -8.199607533768265
+ElectAtt   Energy:  -20.83050256925741
+Band Gap:  12.630895035489143
+Results: PDFT
+Ionization Energy:  -6.29631490967851
+ElectAtt   Energy:  -11.407964679474812
+Band Gap:  5.111649769796302
+output file: NiO_2.3000000000000007.log
+tot grids = 138068
+cell vol = 656.855886  sum(weights) = 657.742077
+tot grids = 138068
+cell vol = 656.855886  sum(weights) = 657.742077
+tot grids = 138068
+cell vol = 656.855886  sum(weights) = 657.742077
+tot grids = 138068
+cell vol = 656.855886  sum(weights) = 657.742077
+tot grids = 138068
+cell vol = 656.855886  sum(weights) = 657.742077
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.400000000000001.chk. Use MINAO initial guess
+WARN: HOMO 0.807230539996377 >= LUMO 0.807230539996388
+Results: LASSI 
+Ionization Energy:  -4.782933551287267
+ElectAtt   Energy:  -19.070347096846163
+Band Gap:  14.287413545558895
+Results: PDFT
+Ionization Energy:  -3.5287980056865984
+ElectAtt   Energy:  -10.280506261758894
+Band Gap:  6.7517082560722965
+output file: NiO_2.400000000000001.log
+tot grids = 138168
+cell vol = 746.311808  sum(weights) = 747.327645
+tot grids = 138168
+cell vol = 746.311808  sum(weights) = 747.327645
+tot grids = 138168
+cell vol = 746.311808  sum(weights) = 747.327645
+tot grids = 138168
+cell vol = 746.311808  sum(weights) = 747.327645
+tot grids = 138168
+cell vol = 746.311808  sum(weights) = 747.327645
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.500000000000001.chk. Use MINAO initial guess
+WARN: HOMO 0.752040999187557 >= LUMO 0.752040999187557
+WARN: HOMO 0.335923989984174 >= LUMO 0.336441298572866
+Results: LASSI 
+Ionization Energy:  -1.633506821149153
+ElectAtt   Energy:  -17.413030717837618
+Band Gap:  15.779523896688465
+Results: PDFT
+Ionization Energy:  -1.305620450780249
+ElectAtt   Energy:  -5.463868561875188
+Band Gap:  4.158248111094939
+output file: NiO_2.500000000000001.log
+tot grids = 138338
+cell vol = 843.541812  sum(weights) = 844.730112
+tot grids = 138338
+cell vol = 843.541812  sum(weights) = 844.730112
+tot grids = 138338
+cell vol = 843.541812  sum(weights) = 844.730112
+tot grids = 138338
+cell vol = 843.541812  sum(weights) = 844.730112
+tot grids = 138338
+cell vol = 843.541812  sum(weights) = 844.730112
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.600000000000001.chk. Use MINAO initial guess
+WARN: HOMO 0.704663894218497 >= LUMO 0.704663894310525
+WARN: HOMO 0.273162916097303 >= LUMO 0.273407275954009
+Results: LASSI 
+Ionization Energy:  0.41637292555313027
+ElectAtt   Energy:  -15.689616178482384
+Band Gap:  16.105989104035515
+Results: PDFT
+Ionization Energy:  0.9955128114440881
+ElectAtt   Energy:  -4.409472738554797
+Band Gap:  5.4049855499988855
+output file: NiO_2.600000000000001.log
+tot grids = 138320
+cell vol = 948.869817  sum(weights) = 950.280838
+tot grids = 138320
+cell vol = 948.869817  sum(weights) = 950.280838
+tot grids = 138320
+cell vol = 948.869817  sum(weights) = 950.280838
+tot grids = 138320
+cell vol = 948.869817  sum(weights) = 950.280838
+tot grids = 138320
+cell vol = 948.869817  sum(weights) = 950.280838
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.700000000000001.chk. Use MINAO initial guess
+WARN: State 1 LASCI not converged!
+WARN: State 2 LASCI not converged!
+WARN: LASSI state preparation step not converged!
+Results: LASSI 
+Ionization Energy:  2.304762169199563
+ElectAtt   Energy:  -13.996925218626282
+Band Gap:  16.301687387825844
+Results: PDFT
+Ionization Energy:  3.610078295915806
+ElectAtt   Energy:  -4.151318649180979
+Band Gap:  7.761396945096785
+output file: NiO_2.700000000000001.log
+tot grids = 138470
+cell vol = 1062.61974  sum(weights) = 1064.31435
+tot grids = 138470
+cell vol = 1062.61974  sum(weights) = 1064.31435
+tot grids = 138470
+cell vol = 1062.61974  sum(weights) = 1064.31435
+tot grids = 138470
+cell vol = 1062.61974  sum(weights) = 1064.31435
+tot grids = 138470
+cell vol = 1062.61974  sum(weights) = 1064.31435
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.800000000000001.chk. Use MINAO initial guess
+WARN: State 1 LASCI not converged!
+WARN: State 2 LASCI not converged!
+WARN: LASSI state preparation step not converged!
+Results: LASSI 
+Ionization Energy:  4.963919556070659
+ElectAtt   Energy:  -12.916938817438337
+Band Gap:  17.880858373508996
+Results: PDFT
+Ionization Energy:  5.079932437146957
+ElectAtt   Energy:  -2.04559797007765
+Band Gap:  7.125530407224607
+output file: NiO_2.800000000000001.log
+tot grids = 138768
+cell vol = 1185.11551  sum(weights) = 1187.1029
+tot grids = 138768
+cell vol = 1185.11551  sum(weights) = 1187.1029
+tot grids = 138768
+cell vol = 1185.11551  sum(weights) = 1187.1029
+tot grids = 138768
+cell vol = 1185.11551  sum(weights) = 1187.1029
+tot grids = 138768
+cell vol = 1185.11551  sum(weights) = 1187.1029
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_2.9000000000000012.chk. Use MINAO initial guess
+WARN: State 1 LASCI not converged!
+WARN: State 2 LASCI not converged!
+WARN: LASSI state preparation step not converged!
+Results: LASSI 
+Ionization Energy:  6.5879148731656985
+ElectAtt   Energy:  -11.55706079470879
+Band Gap:  18.144975667874487
+Results: PDFT
+Ionization Energy:  5.765390997616884
+ElectAtt   Energy:  -2.020725939164861
+Band Gap:  7.786116936781745
+output file: NiO_2.9000000000000012.log
+tot grids = 138712
+cell vol = 1316.68104  sum(weights) = 1318.93124
+tot grids = 138712
+cell vol = 1316.68104  sum(weights) = 1318.93124
+tot grids = 138712
+cell vol = 1316.68104  sum(weights) = 1318.93124
+tot grids = 138712
+cell vol = 1316.68104  sum(weights) = 1318.93124
+tot grids = 138712
+cell vol = 1316.68104  sum(weights) = 1318.93124
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_3.0000000000000013.chk. Use MINAO initial guess
+WARN: HOMO 0.578781008970121 >= LUMO 0.579352921446762
+Results: LASSI 
+Ionization Energy:  8.069644371600683
+ElectAtt   Energy:  -10.279144995199026
+Band Gap:  18.348789366799707
+Results: PDFT
+Ionization Energy:  7.646934481067948
+ElectAtt   Energy:  -0.8472929336616053
+Band Gap:  8.494227414729554
+output file: NiO_3.0000000000000013.log
+tot grids = 138746
+cell vol = 1457.64025  sum(weights) = 1460.2557
+tot grids = 138746
+cell vol = 1457.64025  sum(weights) = 1460.2557
+tot grids = 138746
+cell vol = 1457.64025  sum(weights) = 1460.2557
+tot grids = 138746
+cell vol = 1457.64025  sum(weights) = 1460.2557
+tot grids = 138746
+cell vol = 1457.64025  sum(weights) = 1460.2557
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_3.1000000000000014.chk. Use MINAO initial guess
+WARN: HOMO 0.55542289071066 >= LUMO 0.555422890710665
+Results: LASSI 
+Ionization Energy:  9.281672504859122
+ElectAtt   Energy:  -9.107486427732422
+Band Gap:  18.389158932591542
+Results: PDFT
+Ionization Energy:  9.826864536295481
+ElectAtt   Energy:  0.20538828453276897
+Band Gap:  9.621476251762713
+output file: NiO_3.1000000000000014.log
+tot grids = 138798
+cell vol = 1608.31706  sum(weights) = 1611.23058
+tot grids = 138798
+cell vol = 1608.31706  sum(weights) = 1611.23058
+tot grids = 138798
+cell vol = 1608.31706  sum(weights) = 1611.23058
+tot grids = 138798
+cell vol = 1608.31706  sum(weights) = 1611.23058
+tot grids = 138798
+cell vol = 1608.31706  sum(weights) = 1611.23058
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_3.2000000000000015.chk. Use MINAO initial guess
+WARN: HOMO 0.532922075744702 >= LUMO 0.533419672448172
+Results: LASSI 
+Ionization Energy:  10.173476627055404
+ElectAtt   Energy:  -7.409990618426886
+Band Gap:  17.58346724548229
+Results: PDFT
+Ionization Energy:  10.677079221746487
+ElectAtt   Energy:  1.578588784698559
+Band Gap:  9.098490437047928
+output file: NiO_3.2000000000000015.log
+tot grids = 138740
+cell vol = 1769.0354  sum(weights) = 1772.34765
+tot grids = 138740
+cell vol = 1769.0354  sum(weights) = 1772.34765
+tot grids = 138740
+cell vol = 1769.0354  sum(weights) = 1772.34765
+tot grids = 138740
+cell vol = 1769.0354  sum(weights) = 1772.34765
+tot grids = 138740
+cell vol = 1769.0354  sum(weights) = 1772.34765
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_3.3000000000000016.chk. Use MINAO initial guess
+WARN: HOMO 0.514819039960526 >= LUMO 0.515255581725996
+WARN: HOMO 0.161259985321307 >= LUMO 0.16180012132743
+WARN: HOMO 0.162975462377601 >= LUMO 0.163272350962254
+WARN: HOMO 0.16597060611976 >= LUMO 0.166029734378884
+WARN: HOMO 0.158384284749328 >= LUMO 0.159290188701027
+WARN: HOMO 0.168283314138318 >= LUMO 0.168733832944649
+WARN: HOMO 0.166859032680579 >= LUMO 0.1675992798296
+WARN: HOMO 0.167140961429346 >= LUMO 0.167527169241356
+WARN: HOMO 0.162836954102857 >= LUMO 0.163554695305991
+WARN: HOMO 0.1678571787226911 > LUMO 0.16079918822729636 was found in the canonicalized orbitals.
+Results: LASSI 
+Ionization Energy:  11.379502379839202
+ElectAtt   Energy:  -6.696385146043342
+Band Gap:  18.075887525882543
+Results: PDFT
+Ionization Energy:  11.32085103518829
+ElectAtt   Energy:  -1.358691216058816
+Band Gap:  12.679542251247106
+output file: NiO_3.3000000000000016.log
+tot grids = 138878
+cell vol = 1940.11917  sum(weights) = 1943.88574
+tot grids = 138878
+cell vol = 1940.11917  sum(weights) = 1943.88574
+tot grids = 138878
+cell vol = 1940.11917  sum(weights) = 1943.88574
+tot grids = 138878
+cell vol = 1940.11917  sum(weights) = 1943.88574
+tot grids = 138878
+cell vol = 1940.11917  sum(weights) = 1943.88574
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_3.4000000000000017.chk. Use MINAO initial guess
+WARN: HOMO 0.498336958244423 >= LUMO 0.498573741917667
+WARN: HOMO 0.14102346701299 >= LUMO 0.141023467012996
+WARN: HOMO 0.133487343191412 >= LUMO 0.134202840513307
+WARN: HOMO 0.144562120998802 >= LUMO 0.14470119760019
+WARN: HOMO 0.147000081411401 >= LUMO 0.147179817482191
+WARN: HOMO 0.167234618454571 >= LUMO 0.168189197023576
+WARN: HOMO 0.177330043583154 >= LUMO 0.17812210459845
+WARN: HOMO 0.1541269988634841 > LUMO 0.14919658537711847 was found in the canonicalized orbitals.
+Results: LASSI 
+Ionization Energy:  -0.6286021166509467
+ElectAtt   Energy:  -0.7670959138359451
+Band Gap:  0.13849379718499844
+Results: PDFT
+Ionization Energy:  6.265408396352081
+ElectAtt   Energy:  0.22794186711038933
+Band Gap:  6.037466529241692
+output file: NiO_3.4000000000000017.log
+tot grids = 138950
+cell vol = 2121.89231  sum(weights) = 2125.98702
+tot grids = 138950
+cell vol = 2121.89231  sum(weights) = 2125.98702
+tot grids = 138950
+cell vol = 2121.89231  sum(weights) = 2125.98702
+tot grids = 138950
+cell vol = 2121.89231  sum(weights) = 2125.98702
+tot grids = 138950
+cell vol = 2121.89231  sum(weights) = 2125.98702
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+WARN: Fail in reading NiO_3.5000000000000018.chk. Use MINAO initial guess
+WARN: HOMO 0.483273465624834 >= LUMO 0.483345395806637
+WARN: HOMO 0.283424397242012 >= LUMO 0.28357525405384
+WARN: HOMO 0.140244143401945 >= LUMO 0.14024414340197
+WARN: HOMO 0.129354721730911 >= LUMO 0.130168047010652
+WARN: HOMO 0.131090802539491 >= LUMO 0.131540585767757
+WARN: HOMO 0.140423996887153 >= LUMO 0.141173614176455
+WARN: HOMO 0.14426484649252258 > LUMO 0.13933911639000096 was found in the canonicalized orbitals.
+Results: LASSI 
+Ionization Energy:  17.011355925295526
+ElectAtt   Energy:  0.8258317542647621
+Band Gap:  16.185524171030764
+Results: PDFT
+Ionization Energy:  21.278226268681653
+ElectAtt   Energy:  5.870206452786647
+Band Gap:  15.408019815895006
+output file: NiO_3.5000000000000018.log
+tot grids = 138922
+cell vol = 2314.67873  sum(weights) = 2319.153
+tot grids = 138922
+cell vol = 2314.67873  sum(weights) = 2319.153
+tot grids = 138922
+cell vol = 2314.67873  sum(weights) = 2319.153
+tot grids = 138922
+cell vol = 2314.67873  sum(weights) = 2319.153
+tot grids = 138922
+cell vol = 2314.67873  sum(weights) = 2319.153
+Results: LASSI 
+Ionization Energy:  3.066928878375572
+ElectAtt   Energy:  2.4333792590802643
+Band Gap:  0.6335496192953078
+Results: PDFT
+Ionization Energy:  6.448994603620628
+ElectAtt   Energy:  4.254423251439588
+Band Gap:  2.1945713521810397

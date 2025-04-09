@@ -1,0 +1,361 @@
+#INFO: **** input file is /project/lgagliardi/jangidbhavnesh/Re/Final/PolyAcetyleneChain/EOMCCSDBands/polyacetylene.las.py ****
+import os
+import sys
+import pickle
+import numpy as np
+from functools import reduce
+from pyscf import lib
+from pyscf.pbc import scf, df
+from pyscf.pbc import gto as pgto
+from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
+from mrh.my_pyscf.lassi import lassi
+from mrh.my_pyscf import mcpdft
+
+def get_xyz(nU=1, d= 2.47):
+    coords = [
+    ("C", -0.5892731038,  0.3262391909,  0.0000000000),
+    ("H", -0.5866101958,  1.4126530287,  0.0000000000),
+    ("C",  0.5916281105, -0.3261693897,  0.0000000000),
+    ("H",  0.5889652025, -1.4125832275,  0.0000000000)]
+
+    translated_coords = []
+    for t in range(nU):
+        shift = t * d
+        translated_coords.extend([(elem, x + shift, y, z) 
+            for elem, x, y, z in coords])
+    return translated_coords
+
+
+def getCell(nC, nkpts=1, d=2.47, maxMem=500000, basis='321G', pseudo=None):
+    """
+    Build the Cell object
+    """
+    cell = pgto.Cell()
+    cell.atom = get_xyz(nU=1, d=d)
+    cell.a = np.diag([2.47, 17.5, 17.5])
+    cell.basis = basis
+    cell.pseudo = pseudo
+    cell.precision=1e-12
+    cell.verbose = lib.logger.INFO
+    cell.max_memory = maxMem
+    cell.output = f"PAChain.{2}.{nkpts}.log"
+    cell.build()
+    return cell
+
+def runSCF(cell, nC, nkpts):
+    """
+    Mean-Field Calculation
+    """
+    nmp = [nkpts, 1, 1]
+    kpts = cell.make_kpts(nmp)
+    kmf = scf.KRHF(cell, kpts=kpts).density_fit()
+    kmf.max_cycle=1000
+    kmf.chkfile = f'PAchain.{2}.{nkpts}.chk'
+    kmf.exxdiv = None
+    kmf.conv_tol = 1e-12
+    kmf.kernel()
+
+    if not kmf.converged:
+        kmf.newton().run()
+
+    assert kmf, "mean-field didn't converge"
+    return kmf
+
+
+def runCCSDBands(cell, kmf, nkpts):
+    from pyscf.pbc import gto, cc
+    from pyscf.pbc.cc import eom_kccsd_rhf as eom_krccsd
+    kpts = cell.make_kpts([nkpts, 1, 1])
+    mycc = cc.KRCCSD(kmf)
+    ekrcc = mycc.kernel()[0]
+    eomip = mycc.ipccsd(nroots=1)[0]
+    eomea = mycc.eaccsd(nroots=1)[0]
+    return ekrcc, eomip, eomea, kmf.kpts
+
+def savepickel(mf, lsi, pdftenergy=0, nCfrag=2, nC=2, R=2.47):
+    """
+    Save the LAS Band Structure Data
+    """
+
+    civec = lsi.get_sivec_vacuum_shuffle(state=0)
+    nfrags = int(nC/nCfrag)
+    charges = util.las_charges(lsi._las)
+
+    data = {"energies_lassi":lsi.e_roots,
+            "energies_lassipdft":pdftenergy,
+            "civecs":civec,
+            "charges":charges,
+            "nfrags":nfrags,
+            "dist":R,
+            "mf_coeff":mf.mo_coeff,
+            "mf_occ":mf.mo_occ,
+            "mf_ene":mf.mo_energy}
+
+if __name__ == "__main__":
+
+    nC = int(sys.argv[1]) # No of CH-atoms
+    nCfrag = min(2, nC)
+    nfrags = int(nC/nCfrag)
+    assert nC%2==0
+    d = 2.47
+
+    for nkpts in [1, 2, 4, 8, 16]:
+
+        cell =  getCell(nC, nkpts=nkpts, d=d, maxMem=900000, basis='321G')
+
+        kmf = runSCF(cell, nC, nkpts)
+
+        e, eip, ea, k = runCCSDBands(cell, kmf, nkpts)
+
+        data = {
+        'eip': eip,
+        'ea': ea,
+        'k': k}
+
+        with open(f"PAChain.{2}.{nkpts}.pkl", "wb") as f:
+            pickle.dump(data, f)
+
+        print("Results:")
+        print("Ionization Energy: {:.2f}".format((max(eip)[0])))
+        print("ElectAtt Energy: {:.2f}".format((min(ea)[0])))
+        print("Band Gap: {:.2f}".format((max(eip) + min(ea))[0]))
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='midway3-0543.rcc.local', release='4.18.0-305.3.1.el8.x86_64', version='#1 SMP Tue Jun 1 16:14:33 UTC 2021', machine='x86_64')  Threads 128
+Python 3.9.13 (main, Aug 25 2022, 23:26:10) 
+[GCC 11.2.0]
+numpy 1.26.2  scipy 1.11.4  h5py 3.10.0
+Date: Thu Mar 13 09:26:09 2025
+PySCF version 2.8.0
+PySCF path  /home/jangidbhavnesh/bin/pyscf
+GIT ORIG_HEAD a0665c4a7bf54e33f01295b3eea390be7a17d76d
+GIT HEAD (branch master) 6f6d3741bf42543e02ccaa1d4ef43d9bf83b3dda
+mrh path  /home/jangidbhavnesh/bin/mrh
+GIT ORIG_HEAD ed1f605b415d72e71fb56d97b9d163809b62b172
+GIT HEAD (branch master) ea89791c15c26abd3b0f0efdeadd7a286ca4585a
+
+[ENV] PYSCF_EXT_PATH /home/jangidbhavnesh/bin/pyscf:/home/jangidbhavnesh/bin/pyscf-forge:/home/jangidbhavnesh/bin/dmrgscf:/home/jangidbhavnesh/bin:
+[CONFIG] conf_file /home/jangidbhavnesh/.pyscf_conf.py
+[INPUT] verbose = 4
+[INPUT] num. atoms = 4
+[INPUT] num. electrons = 14
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 C     -0.589273103800   0.326239190900   0.000000000000 AA   -1.113564778754   0.616502721901   0.000000000000 Bohr   0.0
+[INPUT]  2 H     -0.586610195800   1.412653028700   0.000000000000 AA   -1.108532611939   2.669527333280   0.000000000000 Bohr   0.0
+[INPUT]  3 C      0.591628110500  -0.326169389700   0.000000000000 AA    1.118015096439  -0.616370816750   0.000000000000 Bohr   0.0
+[INPUT]  4 H      0.588965202500  -1.412583227500   0.000000000000 AA    1.112982929624  -2.669395428129   0.000000000000 Bohr   0.0
+
+nuclear repulsion = 47.7395420522365
+number of shells = 14
+number of NR pGTOs = 36
+number of NR cGTOs = 22
+basis = 321G
+ecp = {}
+CPU time:     71098.10
+lattice vectors  a1 [4.667623528, 0.000000000, 0.000000000]
+                 a2 [0.000000000, 33.070207180, 0.000000000]
+                 a3 [0.000000000, 0.000000000, 33.070207180]
+dimension = 3
+low_dim_ft_type = None
+Cell volume = 5104.69
+rcut = 20.04810639385171 (nimgs = [5 1 1])
+lattice sum = 59 cells
+precision = 1e-12
+pseudo = None
+ke_cutoff = 20215.295844348162
+    = [ 301 2119 2119] mesh (1351538461 PWs)
+
+
+******** <class 'pyscf.pbc.scf.khf.KRHF'> ********
+method = KRHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-12
+SCF conv_tol_grad = None
+SCF max_cycles = 1000
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = PAchain.2.16.chk
+max_memory 900000 MB (current use 1615 MB)
+
+
+******** PBC SCF flags ********
+N kpts = 16
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7f4d7d27ea60>
+Set gradient conv threshold to 1e-06
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [ 9 57 57] (29241 PWs)
+ke_cutoff = 14.150506080873477
+omega = 0.4260960622612537
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = None
+_cderi_to_save = /tmp/jobs/29239886/tmplr5d6uo4
+len(kpts) = 16
+Default auxbasis def2-svp-jkfit is used for C 321G
+Default auxbasis def2-svp-jkfit is used for H 321G
+Drop 0 primitive fitting functions
+make aux basis, num shells = 62, num cGTOs = 186
+auxcell.rcut 24.28800816642883
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [ 7 33 33] (7623 PWs)
+ke_cutoff = 4.620573414162768
+omega = 0.23524897112358412
+exclude_d_aux = True
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+init E= -76.7226092539989
+HOMO = -0.0806519395828  LUMO = -0.0322398289615
+cycle= 1 E= -76.1129916269803  delta_E= 0.61  |g|= 0.859  |ddm|= 7.92
+HOMO = -0.155472810527  LUMO = -0.0241783699799
+cycle= 2 E= -76.132822485771  delta_E= -0.0198  |g|= 0.235  |ddm|= 1.93
+HOMO = -0.144119210757  LUMO = 0.0256506910408
+cycle= 3 E= -76.1344046980105  delta_E= -0.00158  |g|= 0.0632  |ddm|= 0.51
+HOMO = -0.158225389074  LUMO = 0.0244028967076
+cycle= 4 E= -76.1345594393509  delta_E= -0.000155  |g|= 0.0135  |ddm|= 0.135
+HOMO = -0.16131154819  LUMO = 0.0281931343705
+cycle= 5 E= -76.1345794184574  delta_E= -2e-05  |g|= 0.00264  |ddm|= 0.054
+HOMO = -0.162213584723  LUMO = 0.0290962847078
+cycle= 6 E= -76.1345801698189  delta_E= -7.51e-07  |g|= 0.000168  |ddm|= 0.0122
+HOMO = -0.1622180358  LUMO = 0.0290793577492
+cycle= 7 E= -76.1345801707925  delta_E= -9.74e-10  |g|= 2.2e-05  |ddm|= 0.000522
+HOMO = -0.162224037556  LUMO = 0.0290831239254
+cycle= 8 E= -76.1345801708147  delta_E= -2.22e-11  |g|= 3.12e-06  |ddm|= 6.96e-05
+HOMO = -0.162224292187  LUMO = 0.0290825993872
+cycle= 9 E= -76.1345801708151  delta_E= -3.69e-13  |g|= 2.51e-07  |ddm|= 6.74e-06
+HOMO = -0.16222429573  LUMO = 0.0290825438641
+Extra cycle  E= -76.1345801708148  delta_E= 3.13e-13  |g|= 6.6e-08  |ddm|= 4.85e-07
+converged SCF energy = -76.1345801708148
+
+******** <class 'pyscf.pbc.cc.kccsd_rhf.RCCSD'> ********
+CC2 = 0
+CCSD nocc = 7, nmo = 22
+max_cycle = 50
+direct = 1
+conv_tol = 1e-07
+conv_tol_normt = 1e-05
+diis_space = 6
+diis_start_cycle = 0
+diis_start_energy_diff = 1e+09
+max_memory 900000 MB (current use 1722 MB)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [ 9 57 57] (29241 PWs)
+ke_cutoff = 14.150506080873477
+omega = 0.4260960622612537
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+using incore ERI storage
+Init t2, MP2 energy (with fock eigenvalue shift) = -0.178342611329566
+Init E_corr(RCCSD) = -0.178342611329566
+cycle = 1  E_corr(RCCSD) = -0.184082398265199  dE = -0.00573978694  norm(t1,t2) = 0.208553
+cycle = 2  E_corr(RCCSD) = -0.190525606421655  dE = -0.00644320816  norm(t1,t2) = 0.0981869
+cycle = 3  E_corr(RCCSD) = -0.191808999064296  dE = -0.00128339264  norm(t1,t2) = 0.0505906
+cycle = 4  E_corr(RCCSD) = -0.193281974737852  dE = -0.00147297567  norm(t1,t2) = 0.0343582
+cycle = 5  E_corr(RCCSD) = -0.193569077437561  dE = -0.0002871027  norm(t1,t2) = 0.0106179
+cycle = 6  E_corr(RCCSD) = -0.193502629278881  dE = 6.64481587e-05  norm(t1,t2) = 0.00516649
+cycle = 7  E_corr(RCCSD) = -0.193458460639511  dE = 4.41686394e-05  norm(t1,t2) = 0.0021003
+cycle = 8  E_corr(RCCSD) = -0.193456260983972  dE = 2.19965554e-06  norm(t1,t2) = 0.0010807
+cycle = 9  E_corr(RCCSD) = -0.193454770163551  dE = 1.49082042e-06  norm(t1,t2) = 0.000662646
+cycle = 10  E_corr(RCCSD) = -0.193457565989299  dE = -2.79582575e-06  norm(t1,t2) = 0.000394655
+cycle = 11  E_corr(RCCSD) = -0.193459057617154  dE = -1.49162785e-06  norm(t1,t2) = 0.000182743
+cycle = 12  E_corr(RCCSD) = -0.193460156892479  dE = -1.09927533e-06  norm(t1,t2) = 8.94225e-05
+cycle = 13  E_corr(RCCSD) = -0.193460871704537  dE = -7.14812058e-07  norm(t1,t2) = 5.17134e-05
+cycle = 14  E_corr(RCCSD) = -0.193461213593804  dE = -3.41889267e-07  norm(t1,t2) = 2.57869e-05
+cycle = 15  E_corr(RCCSD) = -0.193461331640323  dE = -1.18046519e-07  norm(t1,t2) = 1.44094e-05
+cycle = 16  E_corr(RCCSD) = -0.193461400044367  dE = -6.84040436e-08  norm(t1,t2) = 8.41637e-06
+RCCSD converged
+E(RCCSD) = -76.32804157085913  E_corr = -0.1934614000443667
+
+******** <class 'pyscf.pbc.cc.eom_kccsd_rhf.EOMIP'> ********
+max_space = 20
+max_cycle = 50
+conv_tol = 1e-07
+partition = None
+max_memory 900000 MB (current use 9986 MB)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [ 9 57 57] (29241 PWs)
+ke_cutoff = 14.150506080873477
+omega = 0.4260960622612537
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+using incore ERI storage
+EOM-CCSD root 0 E = 0.3543339869860609  qpwt = 0.94298
+EOM-CCSD root 0 E = 0.3609098625686047  qpwt = 0.942676
+EOM-CCSD root 0 E = 0.3626931619608593  qpwt = 0.885842
+EOM-CCSD root 0 E = 0.3436843246487142  qpwt = 0.890657
+EOM-CCSD root 0 E = 0.3168634601227795  qpwt = 0.899903
+EOM-CCSD root 0 E = 0.2817436551369313  qpwt = 0.915225
+EOM-CCSD root 0 E = 0.2375181021147205  qpwt = 0.934582
+EOM-CCSD root 0 E = 0.1865537943870738  qpwt = 0.951158
+EOM-CCSD root 0 E = 0.1569000283829698  qpwt = 0.95979
+EOM-CCSD root 0 E = 0.1865537943870724  qpwt = 0.951158
+EOM-CCSD root 0 E = 0.2375181021147216  qpwt = 0.934582
+EOM-CCSD root 0 E = 0.2817436551369327  qpwt = 0.915225
+EOM-CCSD root 0 E = 0.3168634601227819  qpwt = 0.899903
+EOM-CCSD root 0 E = 0.3436843246487154  qpwt = 0.890657
+EOM-CCSD root 0 E = 0.3626931619608603  qpwt = 0.885842
+EOM-CCSD root 0 E = 0.3609098625686032  qpwt = 0.942676
+
+******** <class 'pyscf.pbc.cc.eom_kccsd_rhf.EOMEA'> ********
+max_space = 20
+max_cycle = 50
+conv_tol = 1e-07
+partition = None
+max_memory 900000 MB (current use 9936 MB)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [ 9 57 57] (29241 PWs)
+ke_cutoff = 14.150506080873477
+omega = 0.4260960622612537
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+using incore ERI storage
+EOM-CCSD root 0 E = 0.2021655124507906  qpwt = 0.96141
+EOM-CCSD root 0 E = 0.207266695914021  qpwt = 0.960816
+EOM-CCSD root 0 E = 0.2213462858466976  qpwt = 0.959195
+EOM-CCSD root 0 E = 0.2165293841175717  qpwt = 0.891488
+EOM-CCSD root 0 E = 0.1875191338066539  qpwt = 0.898478
+EOM-CCSD root 0 E = 0.1461438137218126  qpwt = 0.91437
+EOM-CCSD root 0 E = 0.09387133741848461  qpwt = 0.934293
+EOM-CCSD root 0 E = 0.03626901232645142  qpwt = 0.950461
+EOM-CCSD root 0 E = 0.004073372969438521  qpwt = 0.95858
+EOM-CCSD root 0 E = 0.0362690123264536  qpwt = 0.950461
+EOM-CCSD root 0 E = 0.09387133741848211  qpwt = 0.934293
+EOM-CCSD root 0 E = 0.1461438137218166  qpwt = 0.91437
+EOM-CCSD root 0 E = 0.1875191338066521  qpwt = 0.898478
+EOM-CCSD root 0 E = 0.2165293841175743  qpwt = 0.891488
+EOM-CCSD root 0 E = 0.2213462858466756  qpwt = 0.959195
+EOM-CCSD root 0 E = 0.2072666959140255  qpwt = 0.960816

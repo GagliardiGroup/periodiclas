@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 def fix_mos(las,verbose=False):
     mo = las.mo_coeff
     ref_orbs = las.ncas_sub
-    s = las.mol.intor("int1e_ovlp")
+    s = las._scf.get_ovlp()
+    
     mos = mo[:,las.ncore:las.ncore+las.ncas]
     nfrags = len(ref_orbs)
 
@@ -18,14 +19,17 @@ def fix_mos(las,verbose=False):
         idx = (np.arange(mos.shape[0])+ao_offset*i)%mos.shape[0]
         to_add = mos[:,mo_offset*i:mo_offset*(i+1)][idx,:]
         transmos = np.hstack([transmos,to_add])
-
+       
     #Fix signs
     mo_offset = ref_orbs[0]
+
     for i in range(mo_offset):
         idx = [mo_offset*j+i for j in range(nfrags)]
         transmo = transmos[:,idx]
         ovlp = np.linalg.multi_dot([transmo.T,s,transmo])[0]
+        
         assert(np.allclose(np.abs(ovlp),np.ones(len(ovlp)),atol=1e-1))
+        
         if verbose:
             print(f"orbital {i}:",ovlp)
         sign = ovlp < 0

@@ -1,0 +1,27 @@
+overwrite output file: NiO_4.log_
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+tot grids = 276596
+cell vol = 978.666588  sum(weights) = 980.007297
+Results: LASSI 
+Ionization Energy:  -8.944524694986862
+ElectAtt   Energy:  -25.159285783676555
+Band Gap:  16.21476108868969
+Results: PDFT
+Ionization Energy:  -12.045299747813532
+ElectAtt   Energy:  -16.70198938980728
+Band Gap:  4.656689641993749
