@@ -249,7 +249,7 @@ def plot_charges(charges,labels):
     for i,l in enumerate(labels):
         name = l[2:]
         charge = np.round(charges[i],2)
-        name = f"{name}\n({charge})"
+        name = f"{name}\n(${charge}$)"
         names += [name]
     df["Name"] = names
     colors = []
@@ -322,22 +322,26 @@ def plot_charges(charges,labels):
 
         # Finally add the labels
         # print(angle,label)
+        fs = 13
         if angle in [np.pi, 2*np.pi]:
             ax.text(
                 x=angle, 
-                y=1.2,
+                y=1.25,
                 s=label, 
                 ha=alignment, 
-                va='center', 
+                va='center',
+                fontsize=fs,
                 rotation=rotation, 
                 rotation_mode="anchor")
         else:
             ax.text(
                 x=angle, 
-                y=1.1,
+                y=1.15,
                 s=label, 
                 ha=alignment, 
-                va='center', 
+                va='center',
+                fontsize=fs,
                 rotation=rotation, 
                 rotation_mode="anchor")
+
 
