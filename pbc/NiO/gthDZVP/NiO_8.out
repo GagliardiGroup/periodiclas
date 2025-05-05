@@ -1,0 +1,43 @@
+overwrite output file: NiO_8.log_
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+tot grids = 553490
+cell vol = 1957.33318  sum(weights) = 1960.04319
+Results: LASSI 
+Ionization Energy:  -10.34299148456709
+ElectAtt   Energy:  -26.242857059923658
+Band Gap:  15.899865575356568
+Results: PDFT
+Ionization Energy:  -11.744506147635303
+ElectAtt   Energy:  -17.441804825506043
+Band Gap:  5.697298677870741

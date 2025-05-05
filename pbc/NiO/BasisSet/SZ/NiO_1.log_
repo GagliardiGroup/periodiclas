@@ -1,0 +1,205 @@
+Discarded 6 diffused primitive functions, 0 contracted functions
+
+
+******** <class 'pyscf.pbc.scf.rohf.ROHF'> ********
+method = ROHF
+initial guess = chk
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-10
+SCF conv_tol_grad = None
+SCF max_cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = NiO_1.chk
+max_memory 750000 MB (current use 94 MB)
+******** PBC SCF flags ********
+kpt = [0. 0. 0.]
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7f8bee1785e0>
+number of electrons per cell  alpha = 24 beta = 24
+Set gradient conv threshold to 1e-05
+
+WARN: Fail in reading NiO_1.chk. Use MINAO initial guess
+
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+init E= -357.709586356164
+  HOMO = 1.17784478220657  LUMO = 1.23083639360216
+cycle= 1 E= -357.442600124015  delta_E= 0.267  |g|= 1.18  |ddm|= 2.53
+
+WARN: HOMO 1.02911246952439 >= LUMO 1.0291124695244
+
+cycle= 2 E= -357.128505550412  delta_E= 0.314  |g|= 1.16  |ddm|= 3.13
+  HOMO = 0.842669631078483  LUMO = 0.890660450408364
+cycle= 3 E= -358.29106376007  delta_E= -1.16  |g|= 0.361  |ddm|= 2.83
+  HOMO = 0.805075525535851  LUMO = 0.865736835973398
+cycle= 4 E= -358.351599733986  delta_E= -0.0605  |g|= 0.103  |ddm|= 0.363
+  HOMO = 0.789418479137166  LUMO = 0.857306259925991
+cycle= 5 E= -358.356483733092  delta_E= -0.00488  |g|= 0.0397  |ddm|= 0.185
+  HOMO = 0.789030345162714  LUMO = 0.857571581681348
+cycle= 6 E= -358.356913688849  delta_E= -0.00043  |g|= 0.0233  |ddm|= 0.0179
+  HOMO = 0.788982982519104  LUMO = 0.858569657222573
+cycle= 7 E= -358.357141419105  delta_E= -0.000228  |g|= 0.00229  |ddm|= 0.0219
+  HOMO = 0.788892385995653  LUMO = 0.85867188080547
+cycle= 8 E= -358.357142446352  delta_E= -1.03e-06  |g|= 0.00192  |ddm|= 0.00307
+  HOMO = 0.788897358117167  LUMO = 0.85867222374468
+cycle= 9 E= -358.357143673115  delta_E= -1.23e-06  |g|= 5.4e-05  |ddm|= 0.00157
+  HOMO = 0.788896653539604  LUMO = 0.858672191322479
+cycle= 10 E= -358.35714367384  delta_E= -7.25e-10  |g|= 8.28e-05  |ddm|= 0.000227
+  HOMO = 0.788891256432706  LUMO = 0.858671562020362
+cycle= 11 E= -358.357143675533  delta_E= -1.69e-09  |g|= 5.2e-05  |ddm|= 0.000114
+  HOMO = 0.788889383288466  LUMO = 0.858671589579371
+cycle= 12 E= -358.357143676613  delta_E= -1.08e-09  |g|= 7.97e-07  |ddm|= 6.14e-05
+  HOMO = 0.78888844590755  LUMO = 0.858671667223531
+cycle= 13 E= -358.357143676615  delta_E= -1.93e-12  |g|= 2.84e-07  |ddm|= 5.76e-06
+  HOMO = 0.788888394078308  LUMO = 0.858671676790925
+Extra cycle  E= -358.357143676617  delta_E= -1.65e-12  |g|= 8.17e-07  |ddm|= 3.99e-06
+converged SCF energy = -358.357143676617
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 3.149344e-01 ; sigma = 0.000000e+00 ; 0/1 fragment CI solvers converged
+Cycle 1: max grad = 1.465557e-06 ; sigma = 0.000000e+00 ; 1/1 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 1 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 2.661733e-01 ; sigma = 0.000000e+00 ; 0/1 fragment CI solvers converged
+Cycle 1: max grad = 1.016261e-06 ; sigma = 0.000000e+00 ; 1/1 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 1 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 7.321994e-02 ; sigma = 0.000000e+00 ; 0/1 fragment CI solvers converged
+Cycle 1: max grad = 8.927122e-07 ; sigma = 0.000000e+00 ; 1/1 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 1 cycles
+LASCI state-average energy = -358.528766502592
+LASCI state 0 energy = -358.585693902733
+LASCI state 1 energy = -359.343098775112
+LASCI state 2 energy = -357.657506829932
+******** LAS space tables ********
+LAS space 0: (8e+8e,10o) wfynsm=A
+Converged? True
+E(LAS) = -358.585693902733
+S^2 = 0.0000000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+LAS space 1: (8e+7e,10o) wfynsm=A
+Converged? True
+E(LAS) = -359.343098775112
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+7e,10o)     2    A        1
+LAS space 2: (9e+8e,10o) wfynsm=A
+Converged? True
+E(LAS) = -357.657506829932
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (9e+8e,10o)     2    A        1
+LASSI op_o0 memory check: 0.17928 MB needed of 749417.266176 MB available (750000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Symmetry analysis of 3 LAS rootspaces:
+ ix            Energy  <S**2>  Neleca  Nelecb  Nelec   Wfnsym
+  0   -358.5856939027   0.000       8       8      16       A
+  1   -359.3430987751   0.750       8       7      15       A
+  2   -357.6575068299   0.750       9       8      17       A
+Build + diag H matrix LASSI symmetry block 0
+['neleca', 'nelecb', 'irrep'] = (8, 7, 0)
+(1 rootspaces; 1 states)
+Build + diag H matrix LASSI symmetry block 1
+['neleca', 'nelecb', 'irrep'] = (8, 8, 0)
+(1 rootspaces; 1 states)
+Build + diag H matrix LASSI symmetry block 2
+['neleca', 'nelecb', 'irrep'] = (9, 8, 0)
+(1 rootspaces; 1 states)
+LASSI eigenvalues (3 total):
+ ix            Energy  <S**2>  Neleca  Nelecb  Wfnsym
+  0   -359.3430987751   0.750       8       7       A
+  1   -358.5856939027   0.000       8       8       A
+  2   -357.6575068299   0.750       9       8       A
+Building tPBE functional
+Building tPBE functional
+Periodic OT-FNAL class is used
+LASSI op_o0 memory check: 0.17928 MB needed of 749395.172352 MB available (750000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 0 E = -371.26307750729904, Eot(tPBE) = -41.21844930879278
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 1 E = -370.6650233567854, Eot(tPBE) = -42.270938394307784
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [19 19 19] (6859 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.45845780243714407
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 2 E = -369.8995422585799, Eot(tPBE) = -43.382647885283724

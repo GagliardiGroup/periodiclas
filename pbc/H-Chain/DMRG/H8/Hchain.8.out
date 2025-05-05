@@ -1,0 +1,476 @@
+#INFO: **** input file is /project/lgagliardi/jangidbhavnesh/Re/PaperData/H-Chain/DMRG/H8/hchain.DMRG.py ****
+import sys
+import os
+import shutil
+import pickle
+import numpy as np
+from pyscf.pbc import scf, df
+from pyscf.pbc import gto as pgto
+from pyscf import mcscf, dmrgscf, lib
+
+nodes=1
+if nodes > 1:
+      dmrgscf.settings.MPIPREFIX = f'mpirun -n {nodes} --bind-to bobe'
+
+# Get the cell
+def getCell(nH, maxMem=200000, R=1.4):
+    cell = pgto.Cell()
+    cell.basis='STO-6G'
+    cell.a = np.diag([17.5, 17.5, nH * R])
+    cell.atom = [['H', np.array([0, 0, i*R]) ] for i in range(nH)]
+    cell.verbose=4
+    cell.precision=1e-12
+    cell.output=f'Hchain.{nH}.out'
+    cell.max_memory=maxMem
+    cell.build()
+    return cell
+
+# DMRG Discarded weight extracter
+def getDW(mc, nH):
+    dmrgfile = mc.fcisolver.runtimeDir + '/dmrg.out'
+    with open(dmrgfile, "r") as f:
+        dws = np.array([line.strip().split("|")[-1].split("=")[-1] \
+                for line in f if "DW =" in line]).astype(float)
+    # Also, copy the dmrg.out to current path
+    dmrgout = os.path.join(os.getcwd(), f'dmrg.{nH}.out')
+    shutil.copy(dmrgfile, dmrgout)
+    return dws
+
+# Compute the integrals
+def get_gdf(filename, restart=True):
+    if not os.path.exists(filename) or restart:
+        gdf = df.GDF(cell)
+        gdf._cderi_to_save = filename
+        gdf.build()
+    return filename
+
+# Running the mean-field calculation
+def runSCF(cell, nH):
+    kmf = scf.ROHF(cell).density_fit()
+    kmf.max_cycle=1000
+    kmf.chkfile = f'Hchain.{nH}.chk'
+    kmf.with_df._cderi = get_gdf(kmf.chkfile.rstrip('.chk')+'.h5')
+    kmf.exxdiv=None
+    kmf.conv_tol=1e-12
+    kmf.kernel()
+
+    if not kmf.converged:
+        kmf.newton().run()
+
+    assert kmf, "mean-field didn't converge"
+    return kmf
+
+# For LAS Guess Orbitals
+def genInitGuess(nH, kmf):
+    nHfrag = int(nH/2) # TB consistent with the molecular calculation.
+    norb = tuple([nHfrag,]*2)
+    nele = tuple([nHfrag,]*2)
+    nspin = tuple([1,]*2)
+    frags =tuple([list(range(nH))[i:i + nHfrag] \
+            for i in range(0,nH, nHfrag)])
+    from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
+    las = LASSCF(kmf, norb, nele, spin_sub=nspin)
+    mo0 = las.localize_init_guess(frags,kmf.mo_coeff)
+    return mo0
+
+# DMRGsolver
+def get_dmrgsolver(mol, spin=None, Mvalue=500):
+    solver = dmrgscf.DMRGCI(mol, maxM=Mvalue)
+    solver.memory = int(mol.max_memory/1000)
+    solver.nroots = 1
+    solver.scratchDirectory = lib.param.TMPDIR
+    solver.runtimeDir = lib.param.TMPDIR
+    solver.threads = lib.num_threads()
+    solver._restart = False
+    if spin is not None:
+        solver.spin = spin
+    return solver
+
+def runDMRG(nH, nelec, cell, kmf, mo_coeff=None, Mvalue=500):
+    if mo_coeff is None:
+        mo0 = genInitGuess(nH, kmf)
+    else:
+        mo0 = mo_coeff
+    mc = mcscf.CASCI(kmf, nH, nelec, ncore=0)
+    solver = get_dmrgsolver(cell, spin=nelec%2, Mvalue=Mvalue)
+    mc.fcisolver = solver
+    Energy  = mc.kernel(mo0)[0]
+    DW = getDW(mc, nelec)
+    print("DW", DW)
+    return Energy, DW[-1]
+
+if __name__ == "__main__":
+
+    nH = int(sys.argv[1]) # No of H-atoms
+    assert nH%2==0
+    R = 1.4 # Distance between the H-atoms
+
+    cell =  getCell(nH, maxMem=500000, R=R)
+    kmf = runSCF(cell, nH)
+    from pyscf import lo, mcscf
+
+    lmo_occ = lo.PM(cell, kmf.mo_coeff[:, :int(nH/2)]).kernel()
+    lmo_vir = lo.PM(cell, kmf.mo_coeff[:, int(nH/2):]).kernel()
+
+    lmo = np.hstack((lmo_occ, lmo_vir)) 
+
+    Data={}
+
+    for nelec in [nH, nH-1, nH+1]:
+        with lib.temporary_env(kmf):
+            E, DW = runDMRG(nH, nelec, cell, kmf, mo_coeff=lmo, Mvalue=2000)
+            Data[nelec] = [E, DW]
+    
+    with open(f"hchain.DMRG.{nH}.pkl", "wb") as f:
+        pickle.dump(Data, f)
+
+    # Results
+    print( " *** Results ***")
+    print(f"For {nH} Hydrogen supercell")
+    print(Data)
+    IP=27.21139*(Data[nH-1][0] - Data[nH][0])
+    EA=27.21139*(Data[nH][0] - Data[nH+1][0])
+    print("Ionization Energy: ", IP)
+    print("ElectAtt   Energy: ", EA)
+    print("Band Gap: ", IP-EA)
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='midway3-0542.rcc.local', release='4.18.0-305.3.1.el8.x86_64', version='#1 SMP Tue Jun 1 16:14:33 UTC 2021', machine='x86_64')  Threads 128
+Python 3.13.1 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:29:23) [GCC 11.2.0]
+numpy 1.26.2  scipy 1.14.1  h5py 3.12.1
+Date: Wed Mar 19 00:15:11 2025
+PySCF version 2.7.0
+PySCF path  /home/jangidbhavnesh/pdir/Apps/pyscf
+GIT HEAD (branch master) a0665c4a7bf54e33f01295b3eea390be7a17d76d
+
+[ENV] PYSCF_EXT_PATH /home/jangidbhavnesh/pdir/Apps/dmrgscf:/home/jangidbhavnesh/pdir/Apps/pyscf:/home/jangidbhavnesh/pdir/Apps/pyscf-forge:/home/jangidbhavnesh/pdir/Apps:
+[CONFIG] conf_file /home/jangidbhavnesh/.pyscf_conf.py
+[INPUT] verbose = 4
+[INPUT] num. atoms = 8
+[INPUT] num. electrons = 8
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr   0.0
+[INPUT]  2 H      0.000000000000   0.000000000000   1.400000000000 AA    0.000000000000   0.000000000000   2.645616574391 Bohr   0.0
+[INPUT]  3 H      0.000000000000   0.000000000000   2.800000000000 AA    0.000000000000   0.000000000000   5.291233148782 Bohr   0.0
+[INPUT]  4 H      0.000000000000   0.000000000000   4.200000000000 AA    0.000000000000   0.000000000000   7.936849723173 Bohr   0.0
+[INPUT]  5 H      0.000000000000   0.000000000000   5.600000000000 AA    0.000000000000   0.000000000000  10.582466297564 Bohr   0.0
+[INPUT]  6 H      0.000000000000   0.000000000000   7.000000000000 AA    0.000000000000   0.000000000000  13.228082871955 Bohr   0.0
+[INPUT]  7 H      0.000000000000   0.000000000000   8.400000000000 AA    0.000000000000   0.000000000000  15.873699446347 Bohr   0.0
+[INPUT]  8 H      0.000000000000   0.000000000000   9.800000000000 AA    0.000000000000   0.000000000000  18.519316020738 Bohr   0.0
+
+nuclear repulsion = 3.32403179925296
+number of shells = 8
+number of NR pGTOs = 48
+number of NR cGTOs = 8
+basis = STO-6G
+ecp = {}
+CPU time:        12.38
+lattice vectors  a1 [33.070207180, 0.000000000, 0.000000000]
+                 a2 [0.000000000, 33.070207180, 0.000000000]
+                 a3 [0.000000000, 0.000000000, 21.164932595]
+dimension = 3
+low_dim_ft_type = None
+Cell volume = 23146.8
+rcut = 24.293288226937268 (nimgs = [1 1 2])
+lattice sum = 47 cells
+precision = 1e-12
+pseudo = None
+ke_cutoff = 3527.180576457948
+    = [887 887 567] mesh (446098023 PWs)
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = None
+_cderi_to_save = Hchain.8.h5
+len(kpts) = 1
+ETB for H: l = 0, exps = 0.200224856 * 2^n , n = 0..8
+
+WARN: Even tempered Gaussians are generated as DF auxbasis for  H
+
+Drop 0 primitive fitting functions
+make aux basis, num shells = 72, num cGTOs = 72
+auxcell.rcut 17.068110412336893
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [57 57 37] (120213 PWs)
+ke_cutoff = 14.150506080873477
+omega = 0.4355387696361973
+exclude_d_aux = True
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.scf.rohf.ROHF'> ********
+method = ROHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-12
+SCF conv_tol_grad = None
+SCF max_cycles = 1000
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = Hchain.8.chk
+max_memory 500000 MB (current use 299 MB)
+******** PBC SCF flags ********
+kpt = [0. 0. 0.]
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7f12d96a9010>
+number of electrons per cell  alpha = 4 beta = 4
+Set gradient conv threshold to 1e-06
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+init E= -2.45714988456278
+  HOMO = -0.0299263305938448  LUMO = -0.0243438003833838
+cycle= 1 E= -3.41986962530712  delta_E= -0.963  |g|= 0.111  |ddm|= 1.51
+  HOMO = -0.131613571873992  LUMO = 0.0324764691742986
+cycle= 2 E= -3.43142910199781  delta_E= -0.0116  |g|= 0.028  |ddm|= 0.182
+  HOMO = -0.144045633873847  LUMO = 0.045370415787963
+cycle= 3 E= -3.43220708134006  delta_E= -0.000778  |g|= 0.00108  |ddm|= 0.0617
+  HOMO = -0.143936870987166  LUMO = 0.0453810354216947
+cycle= 4 E= -3.43220818512662  delta_E= -1.1e-06  |g|= 0.000478  |ddm|= 0.002
+  HOMO = -0.143896134635271  LUMO = 0.0453798678678109
+cycle= 5 E= -3.43220841392581  delta_E= -2.29e-07  |g|= 2.94e-05  |ddm|= 0.00129
+  HOMO = -0.143917218378883  LUMO = 0.0453761374012643
+cycle= 6 E= -3.43220841511158  delta_E= -1.19e-09  |g|= 4.85e-06  |ddm|= 0.0001
+  HOMO = -0.14391731026039  LUMO = 0.0453761339042261
+cycle= 7 E= -3.43220841512451  delta_E= -1.29e-11  |g|= 1.23e-06  |ddm|= 8.66e-06
+  HOMO = -0.143916624630649  LUMO = 0.0453762709276891
+cycle= 8 E= -3.43220841512605  delta_E= -1.54e-12  |g|= 7.43e-08  |ddm|= 3.25e-06
+  HOMO = -0.143916683406437  LUMO = 0.045376262475387
+cycle= 9 E= -3.43220841512606  delta_E= -6.22e-15  |g|= 5.35e-10  |ddm|= 1.92e-07
+  HOMO = -0.143916683861531  LUMO = 0.0453762623531511
+Extra cycle  E= -3.43220841512606  delta_E= 1.78e-15  |g|= 1.93e-10  |ddm|= 1.4e-09
+converged SCF energy = -3.43220841512606
+
+
+******** <class 'pyscf.lo.pipek.PipekMezey'> ********
+conv_tol = 1e-06
+conv_tol_grad = None
+max_cycle = 100
+max_stepsize = 0.05
+max_iters = 20
+kf_interval = 5
+kf_trust_region = 5
+ah_start_tol = 1000000000.0
+ah_start_cycle = 1
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_max_cycle = 40
+ah_trust_region = 3
+init_guess = atomic
+pop_method = meta_lowdin
+Set conv_tol_grad to 0.000316228
+macro= 1  f(x)= 1.8062082325561  delta_f= 1.80621  |g|= 0.639055  1 KF 2 Hx
+macro= 2  f(x)= 1.8158798695436  delta_f= 0.00967164  |g|= 0.24309  1 KF 2 Hx
+macro= 3  f(x)= 1.8158827053091  delta_f= 2.83577e-06  |g|= 0.00418814  1 KF 1 Hx
+macro= 4  f(x)= 1.8158827053091  delta_f= -6.66134e-16  |g|= 1.28006e-08  1 KF 1 Hx
+macro X = 4  f(x)= 1.8158827053091  |g|= 1.28006e-08  8 intor 4 KF 6 Hx
+
+
+******** <class 'pyscf.lo.pipek.PipekMezey'> ********
+conv_tol = 1e-06
+conv_tol_grad = None
+max_cycle = 100
+max_stepsize = 0.05
+max_iters = 20
+kf_interval = 5
+kf_trust_region = 5
+ah_start_tol = 1000000000.0
+ah_start_cycle = 1
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_max_cycle = 40
+ah_trust_region = 3
+init_guess = atomic
+pop_method = meta_lowdin
+Set conv_tol_grad to 0.000316228
+macro= 1  f(x)= 1.8062082325559  delta_f= 1.80621  |g|= 0.639055  1 KF 2 Hx
+macro= 2  f(x)= 1.8158798695436  delta_f= 0.00967164  |g|= 0.24309  1 KF 2 Hx
+macro= 3  f(x)= 1.8158827053091  delta_f= 2.83577e-06  |g|= 0.00418814  1 KF 1 Hx
+macro= 4  f(x)= 1.8158827053091  delta_f= 4.44089e-16  |g|= 1.28006e-08  1 KF 1 Hx
+macro X = 4  f(x)= 1.8158827053091  |g|= 1.28006e-08  8 intor 4 KF 6 Hx
+
+******** CASCI flags ********
+CAS (4e+4e, 8o), ncore = 0, nvir = 0
+natorb = False
+canonicalization = True
+sorting_mo_energy = False
+max_memory 500000 (MB)
+
+******** Block flags ********
+executable             = /home/jangidbhavnesh/pdir/Apps/block2/pyblock2/driver/block2main
+BLOCKEXE_COMPRESS_NEVPT=  
+Block version          = 2.0
+mpiprefix              =  
+scratchDirectory       = /tmp/jobs/29444628
+integralFile           = /tmp/jobs/29444628/FCIDUMP
+configFile             = /tmp/jobs/29444628/dmrg.conf
+outputFile             = /tmp/jobs/29444628/dmrg.out
+maxIter                = 36
+scheduleSweeps         = [0, 4, 8, 12, 16, 18, 20, 22, 24]
+scheduleMaxMs          = [200, 400, 800, 1600, 2000, 2000, 2000, 2000, 2000]
+scheduleTols           = [0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1e-05, 1.0000000000000002e-06, 1.0000000000000002e-07, 1e-08]
+scheduleNoises         = [0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1e-05, 1.0000000000000002e-06, 1.0000000000000002e-07, 0.0]
+twodot_to_onedot       = 28
+tol                    = 1e-07
+maxM                   = 2000
+dmrg switch tol        = 0.001
+wfnsym                 = 1
+fullrestart            = False
+num_thrds              = 128
+memory                 = 500
+
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Density matrix diagonal elements [1.63617055 1.63616952 1.63615844 1.63616554 0.3638302  0.36383359
+ 0.36383936 0.3638328 ]
+CASCI E = -3.73380416668665  E(CI) = -7.05783596593961  S^2 = 0.0000000
+
+******** CASCI flags ********
+CAS (4e+3e, 8o), ncore = 0, nvir = 0
+natorb = False
+canonicalization = True
+sorting_mo_energy = False
+max_memory 500000 (MB)
+
+******** Block flags ********
+executable             = /home/jangidbhavnesh/pdir/Apps/block2/pyblock2/driver/block2main
+BLOCKEXE_COMPRESS_NEVPT=  
+Block version          = 2.0
+mpiprefix              =  
+scratchDirectory       = /tmp/jobs/29444628
+integralFile           = /tmp/jobs/29444628/FCIDUMP
+configFile             = /tmp/jobs/29444628/dmrg.conf
+outputFile             = /tmp/jobs/29444628/dmrg.out
+maxIter                = 36
+scheduleSweeps         = [0, 4, 8, 12, 16, 18, 20, 22, 24]
+scheduleMaxMs          = [200, 400, 800, 1600, 2000, 2000, 2000, 2000, 2000]
+scheduleTols           = [0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1e-05, 1.0000000000000002e-06, 1.0000000000000002e-07, 1e-08]
+scheduleNoises         = [0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1e-05, 1.0000000000000002e-06, 1.0000000000000002e-07, 0.0]
+twodot_to_onedot       = 28
+tol                    = 1e-07
+maxM                   = 2000
+dmrg switch tol        = 0.001
+wfnsym                 = 1
+fullrestart            = False
+num_thrds              = 128
+memory                 = 500
+
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Density matrix diagonal elements [1.440144   1.44022425 1.44031202 1.44026558 0.30978312 0.30974855
+ 0.30973524 0.30978724]
+CASCI E = -3.49262328761918  E(CI) = -6.81665508687215  S^2 = 0.7500000
+
+******** CASCI flags ********
+CAS (5e+4e, 8o), ncore = 0, nvir = 0
+natorb = False
+canonicalization = True
+sorting_mo_energy = False
+max_memory 500000 (MB)
+
+******** Block flags ********
+executable             = /home/jangidbhavnesh/pdir/Apps/block2/pyblock2/driver/block2main
+BLOCKEXE_COMPRESS_NEVPT=  
+Block version          = 2.0
+mpiprefix              =  
+scratchDirectory       = /tmp/jobs/29444628
+integralFile           = /tmp/jobs/29444628/FCIDUMP
+configFile             = /tmp/jobs/29444628/dmrg.conf
+outputFile             = /tmp/jobs/29444628/dmrg.out
+maxIter                = 36
+scheduleSweeps         = [0, 4, 8, 12, 16, 18, 20, 22, 24]
+scheduleMaxMs          = [200, 400, 800, 1600, 2000, 2000, 2000, 2000, 2000]
+scheduleTols           = [0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1e-05, 1.0000000000000002e-06, 1.0000000000000002e-07, 1e-08]
+scheduleNoises         = [0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 1e-05, 1.0000000000000002e-06, 1.0000000000000002e-07, 0.0]
+twodot_to_onedot       = 28
+tol                    = 1e-07
+maxM                   = 2000
+dmrg switch tol        = 0.001
+wfnsym                 = 1
+fullrestart            = False
+num_thrds              = 128
+memory                 = 500
+
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Density matrix diagonal elements [1.87935919 1.87937702 1.87932018 1.87930848 0.37066127 0.37066585
+ 0.3706528  0.37065521]
+CASCI E = -3.57342346455142  E(CI) = -6.89745526380439  S^2 = 0.7500000

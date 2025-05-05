@@ -1,0 +1,724 @@
+#INFO: **** input file is /project/lgagliardi/jangidbhavnesh/Re/Final/PolyAcetyleneChain/Repeat/2CUC/polyacetylene.las.py ****
+import os
+import sys
+import pickle
+import numpy as np
+from functools import reduce
+from pyscf import lib
+from pyscf.pbc import scf, df
+from pyscf.pbc import gto as pgto
+from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
+from mrh.my_pyscf.lassi import lassi
+from mrh.my_pyscf import mcpdft
+from periodiclas.tools import sign_control, util
+
+def get_xyz(nU=1, d= 2.47):
+    coords = [
+    ("C", -0.5892731038,  0.3262391909,  0.0000000000),
+    ("H", -0.5866101958,  1.4126530287,  0.0000000000),
+    ("C",  0.5916281105, -0.3261693897,  0.0000000000),
+    ("H",  0.5889652025, -1.4125832275,  0.0000000000)]
+
+    translated_coords = []
+    for t in range(nU):
+        shift = t * d
+        translated_coords.extend([(elem, x + shift, y, z) 
+            for elem, x, y, z in coords])
+    return translated_coords
+
+
+def getCell(nC, nU=1, d=2.47, maxMem=500000, basis='321G', pseudo=None):
+    """
+    Build the Cell object
+    """
+    cell = pgto.Cell()
+    cell.atom = get_xyz(nU, d)
+    cell.a = np.diag([2.47*nU, 17.5, 17.5])
+    cell.basis = basis
+    cell.pseudo = pseudo
+    cell.precision=1e-12
+    cell.verbose = lib.logger.INFO
+    cell.max_memory = maxMem
+    cell.output = f"PAChain.{2}.{nC}.log"
+    cell.build()
+    return cell
+
+def initguess(mol, mf, ao_label: list, activespacesize:int):
+    '''
+    Based on the ao_label find the orb which has
+    highest character of that ao
+    '''
+    from pyscf.lo import orth
+    baslst = mol.search_ao_label(ao_label)
+    assert len(baslst) >=activespacesize
+    orbindex=[]
+
+    mo_coeff = mf.mo_coeff
+
+    nkpts, nao = 1, mf.mo_coeff.shape[1]
+    s_sc = mf.get_ovlp()
+    orth_coeff = orth.orth_ao(mol, 'meta_lowdin',pre_orth_ao=None, s=s_sc)
+    C = reduce(np.dot,(orth_coeff.T.conj(), s_sc, mf.mo_coeff))
+    for orb in baslst:
+        ao = C[orb]
+        A = np.argsort(ao*ao.conj())[-activespacesize:][::-1]
+        for element in A:
+            if element not in orbindex:
+                orbindex.append(element)
+                break
+    orbind = [x+1 for x in orbindex]
+    return sorted(orbind[:activespacesize])
+
+def get_gdf(filename, restart=True):
+    """
+    Calculate the 2e Integrals
+    Using the Gaussian Density Fitting.
+    """
+    if not os.path.exists(filename) or restart:
+        gdf = df.GDF(cell)
+        gdf._cderi_to_save = filename
+        gdf.build()
+    return filename
+
+
+def runSCF(cell, nC):
+    """
+    Mean-Field Calculation
+    """
+    kmf = scf.ROHF(cell).density_fit()
+    kmf.max_cycle=1000
+    kmf.chkfile = f'PAchain.{nC}.chk'
+    kmf.with_df._cderi = get_gdf(kmf.chkfile.rstrip('.chk')+'.h5') #, restart=False) 
+    kmf.exxdiv = None
+    kmf.conv_tol = 1e-12
+    kmf.kernel()
+
+    if not kmf.converged:
+        kmf.newton().run()
+
+    assert kmf, "mean-field didn't converge"
+    return kmf
+
+
+def genModelSpace(nfrags):
+    """
+    Model Space Creation for LAS Band Structure
+    """
+    identity = np.eye(nfrags, dtype=int)
+    las_charges = [[0] * nfrags] + identity.tolist() + (-identity).tolist()
+    las_spins = [[0] * nfrags] + identity.tolist() + identity.tolist()
+    las_smults = [[1] * nfrags] + (identity + 1).tolist() + (identity + 1).tolist()
+
+    nrootspaces = len(las_charges)
+    las_weights = np.full(nrootspaces, 1/nrootspaces)
+
+    return las_weights, las_charges, las_spins, las_smults
+
+
+def runLASSCF(nCfrag, nfrags, cell, kmf):
+    """
+    Optimize the Individual Fragment LAS
+    """
+    nC = nCfrag*nfrags
+
+    # Active Space
+    norb  = tuple([nCfrag,]*nfrags)
+    nele  = tuple([nCfrag,]*nfrags)
+    nspin = tuple([1,]*nfrags)
+    
+    # Fragmentation
+    frags =[[i * 4, i * 4 + 2] for i in range(nfrags)]
+    
+    las = LASSCF(kmf, norb, nele, spin_sub=nspin)
+    orblst = initguess(cell, kmf, ['C 2pz', 'C 3pz'], 2*nC)[:nC]
+    sortedmo = las.sort_mo(orblst, kmf.mo_coeff)
+    las.mo_coeff = las.localize_init_guess(frags,sortedmo)
+    las.mo_coeff = sign_control.fix_mos(las)
+    las_weights,las_charges,las_spins,las_smults=genModelSpace(nfrags)
+    las = las.state_average(las_weights,las_charges,las_spins,las_smults)
+    las.lasci_()
+    return las
+
+def processlas(las):
+    """
+    Sign-Fixing for the LAS CI Vectos
+    """
+    las.ci = sign_control.fix_sign(las)
+    las.dump_spaces()
+    return las
+
+
+def runLASSI(las):
+    """
+    LAS State Interaction
+    """
+    lsi = lassi.LASSI(las)
+    energies_lassi, civecs_lassi = lsi.kernel()
+    return lsi, energies_lassi
+
+def runLASSIPDFT(lsi, states=[0]):
+    mc = mcpdft.LASSI(lsi, 'tPBE', states=states)
+    energies = mc.kernel()[0]
+    return energies
+
+def getBANDGAP(nele, lsi, energies_lassi):
+    stateidx = [
+        np.where((np.asarray(lsi.rootsym)[:, :2].sum(axis=1) == nele))[0],
+        np.where((np.asarray(lsi.rootsym)[:, :2].sum(axis=1) == nele - 1))[0],
+        np.where((np.asarray(lsi.rootsym)[:, :2].sum(axis=1) == nele + 1))[0]]
+    stateidx = [list(x) for x in stateidx]
+    ip = 27.21139*(min(energies_lassi[stateidx[1]]) - min(energies_lassi[stateidx[0]]))
+    ea = 27.21139*(min(energies_lassi[stateidx[0]]) - min(energies_lassi[stateidx[2]]))
+    return ip, ea
+
+def getNatorbOcc(nele, lsi):
+    from mrh.my_pyscf.lassi.lassi import root_make_rdm12s
+    stateidx = [
+        np.where((np.asarray(lsi.rootsym)[:, :2].sum(axis=1) == nele))[0],
+        np.where((np.asarray(lsi.rootsym)[:, :2].sum(axis=1) == nele - 1))[0],
+        np.where((np.asarray(lsi.rootsym)[:, :2].sum(axis=1) == nele + 1))[0]]
+    stateidx = [int(list(x)[0]) for x in stateidx]
+    for state in stateidx:
+        natorb_casdm1 = root_make_rdm12s (lsi, lsi.ci, lsi.si, state=state, opt=lsi.opt)[0].sum (0)
+        mo_occ = lsi._las.canonicalize (natorb_casdm1=natorb_casdm1)[2]
+        mo_occ = [x for x in mo_occ if 0 < x < 2]
+        print("State-",state, mo_occ)
+
+def savepickel(mf, lsi, pdftenergy=0, nCfrag=2, nC=2, R=2.47):
+    """
+    Save the LAS Band Structure Data
+    """
+
+    civec = lsi.get_sivec_vacuum_shuffle(state=0)
+    nfrags = int(nC/nCfrag)
+    charges = util.las_charges(lsi._las)
+
+    data = {"energies_lassi":lsi.e_roots,
+            "energies_lassipdft":pdftenergy,
+            "civecs":civec,
+            "charges":charges,
+            "nfrags":nfrags,
+            "dist":R,
+            "mf_coeff":mf.mo_coeff,
+            "mf_occ":mf.mo_occ,
+            "mf_ene":mf.mo_energy}
+
+    with open(f"PAChain.{nCfrag}.{nC}.pkl", "wb") as f:
+        pickle.dump(data, f)
+
+if __name__ == "__main__":
+
+    nC = int(sys.argv[1]) # No of CH-atoms
+    nCfrag = min(2, nC)
+    nfrags = int(nC/nCfrag)
+    assert nC%2==0
+    d = 2.47
+
+    cell =  getCell(nC, nU=nfrags, d=d, maxMem=900000, basis='321G')
+
+    kmf = runSCF(cell, nC)
+
+    las = runLASSCF(nCfrag, nfrags, cell, kmf)
+    las = processlas(las)
+
+    lsi,energies_lassi = runLASSI(las)
+    IP_LASSI, EA_LASSI = getBANDGAP(nC, lsi, energies_lassi)
+
+    energies_mcpdft = runLASSIPDFT(lsi, states=[x for x in range(len(energies_lassi))])
+    IP_PDFT, EA_PDFT = getBANDGAP(nC, lsi,np.asarray(energies_mcpdft))
+    
+    print("Results: LASSI ", )
+    print("Ionization Energy: ", IP_LASSI)
+    print("ElectAtt   Energy: ", EA_LASSI)
+    print("Band Gap: ", IP_LASSI-EA_LASSI)
+
+    print("Results: PDFT", )
+    print("Ionization Energy: ", IP_PDFT)
+    print("ElectAtt   Energy: ", EA_PDFT)
+    print("Band Gap: ", IP_PDFT-EA_PDFT)
+    
+    savepickel(kmf, lsi, pdftenergy=energies_mcpdft, nCfrag=nCfrag, nC=nC, R=2.47)
+
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='midway3-0314.rcc.local', release='4.18.0-305.3.1.el8.x86_64', version='#1 SMP Tue Jun 1 16:14:33 UTC 2021', machine='x86_64')  Threads 32
+Python 3.9.13 (main, Aug 25 2022, 23:26:10) 
+[GCC 11.2.0]
+numpy 1.26.2  scipy 1.11.4  h5py 3.10.0
+Date: Sat Mar  8 19:48:15 2025
+PySCF version 2.8.0
+PySCF path  /home/jangidbhavnesh/bin/pyscf
+GIT ORIG_HEAD a0665c4a7bf54e33f01295b3eea390be7a17d76d
+GIT HEAD (branch master) 6f6d3741bf42543e02ccaa1d4ef43d9bf83b3dda
+mrh path  /home/jangidbhavnesh/bin/mrh
+GIT ORIG_HEAD ed1f605b415d72e71fb56d97b9d163809b62b172
+GIT HEAD (branch master) ea89791c15c26abd3b0f0efdeadd7a286ca4585a
+
+[ENV] PYSCF_EXT_PATH /home/jangidbhavnesh/bin/pyscf:/home/jangidbhavnesh/bin/pyscf-forge:/home/jangidbhavnesh/bin/dmrgscf:/home/jangidbhavnesh/bin:
+[CONFIG] conf_file /home/jangidbhavnesh/.pyscf_conf.py
+[INPUT] verbose = 4
+[INPUT] num. atoms = 16
+[INPUT] num. electrons = 56
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 C     -0.589273103800   0.326239190900   0.000000000000 AA   -1.113564778754   0.616502721901   0.000000000000 Bohr   0.0
+[INPUT]  2 H     -0.586610195800   1.412653028700   0.000000000000 AA   -1.108532611939   2.669527333280   0.000000000000 Bohr   0.0
+[INPUT]  3 C      0.591628110500  -0.326169389700   0.000000000000 AA    1.118015096439  -0.616370816750   0.000000000000 Bohr   0.0
+[INPUT]  4 H      0.588965202500  -1.412583227500   0.000000000000 AA    1.112982929624  -2.669395428129   0.000000000000 Bohr   0.0
+[INPUT]  5 C      1.880726896200   0.326239190900   0.000000000000 AA    3.554058748921   0.616502721901   0.000000000000 Bohr   0.0
+[INPUT]  6 H      1.883389804200   1.412653028700   0.000000000000 AA    3.559090915736   2.669527333280   0.000000000000 Bohr   0.0
+[INPUT]  7 C      3.061628110500  -0.326169389700   0.000000000000 AA    5.785638624115  -0.616370816750   0.000000000000 Bohr   0.0
+[INPUT]  8 H      3.058965202500  -1.412583227500   0.000000000000 AA    5.780606457300  -2.669395428129   0.000000000000 Bohr   0.0
+[INPUT]  9 C      4.350726896200   0.326239190900   0.000000000000 AA    8.221682276597   0.616502721901   0.000000000000 Bohr   0.0
+[INPUT] 10 H      4.353389804200   1.412653028700   0.000000000000 AA    8.226714443412   2.669527333280   0.000000000000 Bohr   0.0
+[INPUT] 11 C      5.531628110500  -0.326169389700   0.000000000000 AA   10.453262151790  -0.616370816750   0.000000000000 Bohr   0.0
+[INPUT] 12 H      5.528965202500  -1.412583227500   0.000000000000 AA   10.448229984975  -2.669395428129   0.000000000000 Bohr   0.0
+[INPUT] 13 C      6.820726896200   0.326239190900   0.000000000000 AA   12.889305804273   0.616502721901   0.000000000000 Bohr   0.0
+[INPUT] 14 H      6.823389804200   1.412653028700   0.000000000000 AA   12.894337971088   2.669527333280   0.000000000000 Bohr   0.0
+[INPUT] 15 C      8.001628110500  -0.326169389700   0.000000000000 AA   15.120885679466  -0.616370816750   0.000000000000 Bohr   0.0
+[INPUT] 16 H      7.998965202500  -1.412583227500   0.000000000000 AA   15.115853512651  -2.669395428129   0.000000000000 Bohr   0.0
+
+nuclear repulsion = 190.958168208947
+number of shells = 56
+number of NR pGTOs = 144
+number of NR cGTOs = 88
+basis = 321G
+ecp = {}
+CPU time:         8.74
+lattice vectors  a1 [18.670494111, 0.000000000, 0.000000000]
+                 a2 [0.000000000, 33.070207180, 0.000000000]
+                 a3 [0.000000000, 0.000000000, 33.070207180]
+dimension = 3
+low_dim_ft_type = None
+Cell volume = 20418.8
+rcut = 20.04810639385171 (nimgs = [2 1 1])
+lattice sum = 37 cells
+precision = 1e-12
+pseudo = None
+ke_cutoff = 20215.295844348162
+    = [1197 2119 2119] mesh (5374722717 PWs)
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = None
+_cderi_to_save = PAchain.8.h5
+len(kpts) = 1
+Default auxbasis def2-svp-jkfit is used for C 321G
+Default auxbasis def2-svp-jkfit is used for H 321G
+Drop 0 primitive fitting functions
+make aux basis, num shells = 248, num cGTOs = 744
+auxcell.rcut 24.28800816642883
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [23 39 39] (34983 PWs)
+ke_cutoff = 6.515730478565466
+omega = 0.27708615641387985
+exclude_d_aux = True
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.scf.rohf.ROHF'> ********
+method = ROHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-12
+SCF conv_tol_grad = None
+SCF max_cycles = 1000
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = PAchain.8.chk
+max_memory 900000 MB (current use 1582 MB)
+******** PBC SCF flags ********
+kpt = [0. 0. 0.]
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7f57e5059940>
+number of electrons per cell  alpha = 28 beta = 28
+Set gradient conv threshold to 1e-06
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+init E= -305.534028256639
+  HOMO = -0.066602238343337  LUMO = -0.0196580096966005
+cycle= 1 E= -303.190077558795  delta_E= 2.34  |g|= 0.408  |ddm|= 2.97
+  HOMO = -0.157024595921514  LUMO = 0.031400841650027
+cycle= 2 E= -303.25839562058  delta_E= -0.0683  |g|= 0.101  |ddm|= 0.678
+  HOMO = -0.135960785065652  LUMO = 0.0621310628033908
+cycle= 3 E= -303.261760900287  delta_E= -0.00337  |g|= 0.0284  |ddm|= 0.14
+  HOMO = -0.144112320753793  LUMO = 0.055686927764361
+cycle= 4 E= -303.262002147118  delta_E= -0.000241  |g|= 0.00345  |ddm|= 0.0307
+  HOMO = -0.144060579887802  LUMO = 0.0558954712625646
+cycle= 5 E= -303.26200443929  delta_E= -2.29e-06  |g|= 0.00216  |ddm|= 0.00476
+  HOMO = -0.144001093822646  LUMO = 0.0559995192835396
+cycle= 6 E= -303.262005677528  delta_E= -1.24e-06  |g|= 9.74e-05  |ddm|= 0.00192
+  HOMO = -0.143997305557308  LUMO = 0.0560121691007177
+cycle= 7 E= -303.262005680276  delta_E= -2.75e-09  |g|= 6.39e-05  |ddm|= 0.000193
+  HOMO = -0.143996473462827  LUMO = 0.0560136580355849
+cycle= 8 E= -303.262005681337  delta_E= -1.06e-09  |g|= 5.16e-06  |ddm|= 5.72e-05
+  HOMO = -0.143995587131099  LUMO = 0.0560146276602605
+cycle= 9 E= -303.262005681347  delta_E= -1.07e-11  |g|= 5.23e-07  |ddm|= 6.46e-06
+  HOMO = -0.143995530214688  LUMO = 0.0560146669343021
+cycle= 10 E= -303.262005681347  delta_E=    0  |g|= 1.88e-07  |ddm|= 7.81e-07
+  HOMO = -0.143995532519071  LUMO = 0.056014658688336
+Extra cycle  E= -303.262005681347  delta_E= -1.71e-13  |g|= 8.55e-08  |ddm|= 3.44e-07
+converged SCF energy = -303.262005681347
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217798e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 9.924733e-05 ; sigma = 5.112488e-10 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 1.587131e-07 ; sigma = 1.776357e-14 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 2 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217804e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 1.404761e-03 ; sigma = 2.952817e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 4.302642e-05 ; sigma = 5.049651e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 1.333464e-06 ; sigma = 4.663853e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 4.326556e-08 ; sigma = 4.483525e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217804e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 1.404761e-03 ; sigma = 2.952817e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 4.302644e-05 ; sigma = 5.049647e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 1.333457e-06 ; sigma = 4.663857e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 4.326548e-08 ; sigma = 4.482636e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217804e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 1.404762e-03 ; sigma = 2.952817e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 4.302643e-05 ; sigma = 5.049653e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 1.333472e-06 ; sigma = 4.663856e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 4.326632e-08 ; sigma = 4.484413e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217804e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 1.404761e-03 ; sigma = 2.952817e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 4.302646e-05 ; sigma = 5.049651e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 1.333466e-06 ; sigma = 4.663861e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 4.326625e-08 ; sigma = 4.483525e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217803e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 9.139804e-04 ; sigma = 2.887169e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 2.903419e-05 ; sigma = 2.130682e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 9.009841e-07 ; sigma = 2.089848e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 3.032878e-08 ; sigma = 2.014389e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217803e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 9.139804e-04 ; sigma = 2.887169e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 2.903423e-05 ; sigma = 2.130681e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 9.009834e-07 ; sigma = 2.089852e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 3.032931e-08 ; sigma = 2.016165e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217803e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 9.139804e-04 ; sigma = 2.887169e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 2.903419e-05 ; sigma = 2.130682e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 9.009823e-07 ; sigma = 2.089847e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 3.032868e-08 ; sigma = 2.012612e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.217803e-01 ; sigma = 0.000000e+00 ; 0/4 fragment CI solvers converged
+Cycle 1: max grad = 9.139801e-04 ; sigma = 2.887169e-02 ; 4/4 fragment CI solvers converged
+Cycle 2: max grad = 2.903422e-05 ; sigma = 2.130680e-06 ; 4/4 fragment CI solvers converged
+Cycle 3: max grad = 9.009814e-07 ; sigma = 2.089851e-09 ; 4/4 fragment CI solvers converged
+Cycle 4: max grad = 3.032920e-08 ; sigma = 2.012612e-12 ; 4/4 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+LASCI state-average energy = -302.962861569607
+LASCI state 0 energy = -303.193689182514
+LASCI state 1 energy = -302.905708515664
+LASCI state 2 energy = -302.905708517223
+LASCI state 3 energy = -302.905708517223
+LASCI state 4 energy = -302.905708515664
+LASCI state 5 energy = -302.962307719841
+LASCI state 6 energy = -302.962307719245
+LASCI state 7 energy = -302.962307719245
+LASCI state 8 energy = -302.962307719841
+******** LAS space tables ********
+LAS space 0: (4e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -303.193689182514
+S^2 = 0.0000000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 1: (4e+3e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.905708515664
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+0e,2o)     2    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 2: (4e+3e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.905708517223
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+0e,2o)     2    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 3: (4e+3e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.905708517223
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+0e,2o)     2    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 4: (4e+3e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.905708515664
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+0e,2o)     2    A        1
+LAS space 5: (5e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.962307719841
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (2e+1e,2o)     2    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 6: (5e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.962307719245
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (2e+1e,2o)     2    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 7: (5e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.962307719245
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (2e+1e,2o)     2    A        1
+    3    (1e+1e,2o)     1    A        1
+LAS space 8: (5e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -302.962307719841
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (1e+1e,2o)     1    A        1
+    1    (1e+1e,2o)     1    A        1
+    2    (1e+1e,2o)     1    A        1
+    3    (2e+1e,2o)     2    A        1
+LASSI op_o0 memory check: 0.106368 MB needed of 898197.121024 MB available (900000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Symmetry analysis of 9 LAS rootspaces:
+ ix            Energy  <S**2>  Neleca  Nelecb  Nelec   Wfnsym
+  0   -303.1936891825   0.000       4       4       8       A
+  1   -302.9057085157   0.750       4       3       7       A
+  2   -302.9057085172   0.750       4       3       7       A
+  3   -302.9057085172   0.750       4       3       7       A
+  4   -302.9057085157   0.750       4       3       7       A
+  5   -302.9623077198   0.750       5       4       9       A
+  6   -302.9623077192   0.750       5       4       9       A
+  7   -302.9623077192   0.750       5       4       9       A
+  8   -302.9623077198   0.750       5       4       9       A
+Build + diag H matrix LASSI symmetry block 0
+['neleca', 'nelecb', 'irrep'] = (5, 4, 0)
+(4 rootspaces; 4 states)
+LASSI op_o0 memory check: 0.08017919999999999 MB needed of 898202.748928 MB available (900000 MB max)
+4/4 linearly independent model states
+Build + diag H matrix LASSI symmetry block 1
+['neleca', 'nelecb', 'irrep'] = (4, 4, 0)
+(1 rootspaces; 1 states)
+Build + diag H matrix LASSI symmetry block 2
+['neleca', 'nelecb', 'irrep'] = (4, 3, 0)
+(4 rootspaces; 4 states)
+LASSI op_o0 memory check: 0.08017919999999999 MB needed of 898202.712064 MB available (900000 MB max)
+4/4 linearly independent model states
+LASSI eigenvalues (9 total):
+ ix            Energy  <S**2>  Neleca  Nelecb  Wfnsym
+  0   -303.1936891825   0.000       4       4       A
+  1   -303.0922218374   0.750       5       4       A
+  2   -303.0207817695   0.750       4       3       A
+  3   -302.9555409909   0.750       5       4       A
+  4   -302.9555409905   0.750       5       4       A
+  5   -302.9055811001   0.750       4       3       A
+  6   -302.9055810983   0.750       4       3       A
+  7   -302.8459270594   0.750       5       4       A
+  8   -302.7908900978   0.750       4       3       A
+Building tPBE functional
+Building tPBE functional
+Periodic OT-FNAL class is used
+LASSI op_o0 memory check: 0.106368 MB needed of 898202.646528 MB available (900000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 0 E = -307.25832066743357, Eot(tPBE) = -45.788385281756746
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 1 E = -307.2913569179397, Eot(tPBE) = -46.218580452293395
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 2 E = -307.0363017569964, Eot(tPBE) = -45.26334450219521
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 3 E = -307.18355015232055, Eot(tPBE) = -46.251423890226626
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 4 E = -307.1835501520374, Eot(tPBE) = -46.251423890353614
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 5 E = -306.94479809474706, Eot(tPBE) = -45.294014591939664
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 6 E = -306.944798093217, Eot(tPBE) = -45.29401459220963
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 7 E = -307.0989929681317, Eot(tPBE) = -46.27772395021074
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 65 65] (156325 PWs)
+ke_cutoff = 18.346918342586235
+omega = 0.48437388358551264
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 8 E = -306.8538317445724, Eot(tPBE) = -45.32266501873667

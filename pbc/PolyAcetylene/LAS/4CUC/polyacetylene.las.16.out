@@ -1,0 +1,27 @@
+output file: PAChain.4.16.log
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+Results: LASSI 
+Ionization Energy:  4.293508132371374
+ElectAtt   Energy:  -1.9046563590115224
+Band Gap:  6.198164491382897
+Results: PDFT
+Ionization Energy:  4.813960454502103
+ElectAtt   Energy:  2.408465666828306
+Band Gap:  2.4054947876737973
