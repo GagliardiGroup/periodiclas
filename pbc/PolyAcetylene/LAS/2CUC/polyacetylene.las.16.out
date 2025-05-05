@@ -1,0 +1,43 @@
+overwrite output file: PAChain.2.16.log
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+tot grids = 382291
+cell vol = 40837.5462  sum(weights) = 29522.1533
+Results: LASSI 
+Ionization Energy:  4.789002600691678
+ElectAtt   Energy:  -2.596268844836521
+Band Gap:  7.385271445528199
+Results: PDFT
+Ionization Energy:  4.914174759706187
+ElectAtt   Energy:  1.9002193478746547
+Band Gap:  3.013955411831532

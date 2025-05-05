@@ -1,0 +1,77 @@
+/project/lgagliardi/jangidbhavnesh/Re/Final/PolyAcetyleneChain/Repeat/8CUC/polyacetylene.las.py:11: FutureWarning: Most MC-PDFT and MC-DCFT modules have been moved to pyscf-forge (github.com/pyscf/pyscf-forge) and will be removed from mrh soon.
+  from mrh.my_pyscf import mcpdft
+output file: PAChain.8.128.log
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+tot grids = 3058867
+cell vol = 326700.37  sum(weights) = 236378.005
+Results: LASSI 
+Ionization Energy:  10.56734334106106
+ElectAtt   Energy:  -1.3719466882718265
+Band Gap:  11.939290029332886
+Results: PDFT
+Ionization Energy:  3.8808493558813284
+ElectAtt   Energy:  3.370795587635318
+Band Gap:  0.5100537682460105

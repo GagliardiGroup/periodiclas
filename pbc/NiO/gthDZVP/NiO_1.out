@@ -1,0 +1,15 @@
+overwrite output file: NiO_1.log_
+tot grids = 68258
+cell vol = 244.666647  sum(weights) = 244.987774
+tot grids = 68258
+cell vol = 244.666647  sum(weights) = 244.987774
+tot grids = 68258
+cell vol = 244.666647  sum(weights) = 244.987774
+Results: LASSI 
+Ionization Energy:  -17.200727072220566
+ElectAtt   Energy:  -23.000127812267355
+Band Gap:  5.799400740046789
+Results: PDFT
+Ionization Energy:  -13.655179541152297
+ElectAtt   Energy:  -18.05511638478382
+Band Gap:  4.399936843631522

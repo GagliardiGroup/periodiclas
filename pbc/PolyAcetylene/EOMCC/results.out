@@ -1,0 +1,27 @@
+# README: These values are in au
+
+output file: PAChain.2.1.log
+Results:
+Ionization Energy: 0.67
+ElectAtt Energy: 0.18
+Band Gap: 0.84
+output file: PAChain.2.2.log
+Results:
+Ionization Energy: 0.51
+ElectAtt Energy: 0.08
+Band Gap: 0.59
+output file: PAChain.2.4.log
+Results:
+Ionization Energy: 0.33
+ElectAtt Energy: 0.05
+Band Gap: 0.38
+output file: PAChain.2.8.log
+Results:
+Ionization Energy: 0.33
+ElectAtt Energy: 0.02
+Band Gap: 0.35
+output file: PAChain.2.16.log
+Results:
+Ionization Energy: 0.36
+ElectAtt Energy: 0.00
+Band Gap: 0.37

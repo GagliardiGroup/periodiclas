@@ -1,0 +1,75 @@
+output file: PAChain.4.64.log
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+Results: LASSI 
+Ionization Energy:  6.997934969777994
+ElectAtt   Energy:  -1.7060240968240095
+Band Gap:  8.703959066602003
+Results: PDFT
+Ionization Energy:  3.9485697790308256
+ElectAtt   Energy:  3.193179143039187
+Band Gap:  0.7553906359916387

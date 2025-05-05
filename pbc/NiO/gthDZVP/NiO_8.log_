@@ -1,0 +1,1024 @@
+Discarded 64 diffused primitive functions, 0 contracted functions
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = 0.1
+_cderi_to_save = NiO_8.h5
+len(kpts) = 1
+ETB for O: l = 0, exps = 0.32498323008 * 2^n , n = 0..6
+ETB for O: l = 1, exps = 0.32498323008 * 2^n , n = 0..6
+ETB for O: l = 2, exps = 0.32498323008 * 2^n , n = 0..6
+ETB for O: l = 3, exps = 0.32498323008 * 2^n , n = 0..6
+ETB for O: l = 4, exps = 0.32498323008 * 2^n , n = 0..6
+ETB for Ni: l = 0, exps = 0.689956484316 * 2^n , n = 0..4
+ETB for Ni: l = 1, exps = 0.689956484316 * 2^n , n = 0..4
+ETB for Ni: l = 2, exps = 0.689956484316 * 2^n , n = 0..4
+ETB for Ni: l = 3, exps = 0.689956484316 * 2^n , n = 0..4
+ETB for Ni: l = 4, exps = 0.689956484316 * 2^n , n = 0..4
+ETB for Ni: l = 5, exps = 0.689956484316 * 2^n , n = 0..4
+ETB for Ni: l = 6, exps = 0.689956484316 * 2^n , n = 0..4
+
+WARN: Even tempered Gaussians are generated as DF auxbasis for  O Ni
+
+Drop 0 primitive fitting functions
+make aux basis, num shells = 1120, num cGTOs = 6720
+auxcell.rcut 14.405988831603228
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [17 17 17] (4913 PWs)
+ke_cutoff = 3.390694178679465
+omega = 0.1984674176328895
+exclude_d_aux = True
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.scf.rohf.ROHF'> ********
+method = ROHF
+initial guess = chk
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-10
+SCF conv_tol_grad = None
+SCF max_cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = NiO_8.chk
+max_memory 750000 MB (current use 1734 MB)
+******** PBC SCF flags ********
+kpt = [0. 0. 0.]
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7fe98f3d9160>
+number of electrons per cell  alpha = 192 beta = 192
+Set gradient conv threshold to 1e-05
+
+WARN: Fail in reading NiO_8.chk. Use MINAO initial guess
+
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+init E= -2896.24813501761
+
+WARN: HOMO 0.952904049205394 >= LUMO 0.952904049205413
+
+cycle= 1 E= -2869.49984966562  delta_E= 26.7  |g|= 17.5  |ddm|= 9.82
+
+WARN: HOMO 0.685393206166382 >= LUMO 0.685393206166524
+
+cycle= 2 E= -2823.54581565384  delta_E=   46  |g|=   22  |ddm|=   15
+  HOMO = 0.661834602996095  LUMO = 0.662975258961248
+cycle= 3 E= -2901.30682304875  delta_E= -77.8  |g|= 5.55  |ddm|= 10.8
+  HOMO = 0.734906175492256  LUMO = 0.740977621415116
+cycle= 4 E= -2889.27802485783  delta_E=   12  |g|= 10.4  |ddm|= 7.91
+  HOMO = 0.66005203634499  LUMO = 0.668284364617977
+cycle= 5 E= -2899.33992169146  delta_E= -10.1  |g|= 6.87  |ddm|= 6.37
+  HOMO = 0.679825888569946  LUMO = 0.682517457944163
+cycle= 6 E= -2902.28758482038  delta_E= -2.95  |g|= 5.41  |ddm|= 5.97
+  HOMO = 0.643126910959127  LUMO = 0.645838466098549
+cycle= 7 E= -2905.94586051935  delta_E= -3.66  |g|= 3.37  |ddm|= 4.81
+  HOMO = 0.674444813990777  LUMO = 0.679721961741064
+cycle= 8 E= -2907.61505427109  delta_E= -1.67  |g|= 2.28  |ddm|= 3.86
+  HOMO = 0.660286558327221  LUMO = 0.681392505245365
+cycle= 9 E= -2908.9635363241  delta_E= -1.35  |g|= 1.21  |ddm|= 2.51
+  HOMO = 0.597967293984076  LUMO = 0.78697840033191
+cycle= 10 E= -2909.21325277134  delta_E= -0.25  |g|= 0.606  |ddm|= 0.641
+  HOMO = 0.562940529677644  LUMO = 0.85296273199354
+cycle= 11 E= -2909.28233918535  delta_E= -0.0691  |g|= 0.252  |ddm|= 0.514
+  HOMO = 0.573011175270368  LUMO = 0.86164290061805
+cycle= 12 E= -2909.29239852845  delta_E= -0.0101  |g|= 0.11  |ddm|= 0.186
+  HOMO = 0.567709936819105  LUMO = 0.864671195310797
+cycle= 13 E= -2909.29432006319  delta_E= -0.00192  |g|= 0.0484  |ddm|= 0.063
+  HOMO = 0.566625825796188  LUMO = 0.868695632090175
+cycle= 14 E= -2909.29475294331  delta_E= -0.000433  |g|= 0.0131  |ddm|= 0.0394
+  HOMO = 0.567306877108576  LUMO = 0.868803698889484
+cycle= 15 E= -2909.29478652871  delta_E= -3.36e-05  |g|= 0.00648  |ddm|= 0.00908
+  HOMO = 0.567240070391246  LUMO = 0.868512869289442
+cycle= 16 E= -2909.29480391137  delta_E= -1.74e-05  |g|= 0.00407  |ddm|= 0.00569
+  HOMO = 0.567308077247883  LUMO = 0.868473081796454
+cycle= 17 E= -2909.29481452035  delta_E= -1.06e-05  |g|= 0.00339  |ddm|= 0.00395
+  HOMO = 0.567304069531447  LUMO = 0.86848823957418
+cycle= 18 E= -2909.29482344798  delta_E= -8.93e-06  |g|= 0.00299  |ddm|= 0.00331
+  HOMO = 0.567332591424517  LUMO = 0.868471787215564
+cycle= 19 E= -2909.2948433722  delta_E= -1.99e-05  |g|= 0.00271  |ddm|= 0.00792
+  HOMO = 0.567360786310208  LUMO = 0.868515417409968
+cycle= 20 E= -2909.29490499042  delta_E= -6.16e-05  |g|= 0.00181  |ddm|= 0.0339
+  HOMO = 0.567332581794297  LUMO = 0.868500501143435
+cycle= 21 E= -2909.29492799129  delta_E= -2.3e-05  |g|= 0.000693  |ddm|= 0.03
+  HOMO = 0.567335792579652  LUMO = 0.868477009108451
+cycle= 22 E= -2909.29492918558  delta_E= -1.19e-06  |g|= 0.000479  |ddm|= 0.00534
+  HOMO = 0.567324414144228  LUMO = 0.868468537749616
+cycle= 23 E= -2909.29492946115  delta_E= -2.76e-07  |g|= 0.00044  |ddm|= 0.000963
+  HOMO = 0.567323958573786  LUMO = 0.868462295192479
+cycle= 24 E= -2909.2949298057  delta_E= -3.45e-07  |g|= 0.000419  |ddm|= 0.001
+  HOMO = 0.567323737468496  LUMO = 0.868461839730876
+cycle= 25 E= -2909.29493045188  delta_E= -6.46e-07  |g|= 0.000385  |ddm|= 0.00189
+  HOMO = 0.567316254611149  LUMO = 0.868464319564091
+cycle= 26 E= -2909.2949318476  delta_E= -1.4e-06  |g|= 0.000324  |ddm|= 0.00493
+  HOMO = 0.567319450406112  LUMO = 0.868469583011134
+cycle= 27 E= -2909.29493263223  delta_E= -7.85e-07  |g|= 0.000289  |ddm|= 0.00357
+  HOMO = 0.5673181966072  LUMO = 0.868468373672619
+cycle= 28 E= -2909.2949327793  delta_E= -1.47e-07  |g|= 0.000285  |ddm|= 0.000693
+  HOMO = 0.567318342952969  LUMO = 0.868468160950899
+cycle= 29 E= -2909.29493283602  delta_E= -5.67e-08  |g|= 0.000285  |ddm|= 0.000245
+  HOMO = 0.567317921024464  LUMO = 0.868467190074016
+cycle= 30 E= -2909.29493268974  delta_E= 1.46e-07  |g|= 0.000284  |ddm|= 0.000641
+  HOMO = 0.567319940046967  LUMO = 0.868468210178444
+cycle= 31 E= -2909.29493167073  delta_E= 1.02e-06  |g|= 0.000257  |ddm|= 0.00488
+  HOMO = 0.567316367828373  LUMO = 0.868469975729329
+cycle= 32 E= -2909.29492980606  delta_E= 1.86e-06  |g|= 0.000209  |ddm|= 0.0109
+  HOMO = 0.567318639573353  LUMO = 0.868468416367265
+cycle= 33 E= -2909.29492912013  delta_E= 6.86e-07  |g|= 0.000191  |ddm|= 0.00544
+  HOMO = 0.567320376848276  LUMO = 0.868469653150774
+cycle= 34 E= -2909.2949289766  delta_E= 1.44e-07  |g|= 0.000185  |ddm|= 0.00155
+  HOMO = 0.567319335931607  LUMO = 0.868469134235844
+cycle= 35 E= -2909.29492886636  delta_E= 1.1e-07  |g|= 0.000175  |ddm|= 0.00155
+  HOMO = 0.56732141168927  LUMO = 0.868469407669267
+cycle= 36 E= -2909.29492878819  delta_E= 7.82e-08  |g|= 0.000157  |ddm|= 0.00215
+  HOMO = 0.567320478388206  LUMO = 0.868470857306074
+cycle= 37 E= -2909.29492874266  delta_E= 4.55e-08  |g|= 0.000141  |ddm|= 0.0027
+  HOMO = 0.567320539300093  LUMO = 0.868470813302982
+cycle= 38 E= -2909.2949287022  delta_E= 4.05e-08  |g|= 0.000119  |ddm|= 0.00229
+  HOMO = 0.567320273547812  LUMO = 0.868472310894212
+cycle= 39 E= -2909.29492870772  delta_E= -5.53e-09  |g|= 0.000114  |ddm|= 0.000769
+  HOMO = 0.567319554382461  LUMO = 0.868471446147155
+cycle= 40 E= -2909.29492873322  delta_E= -2.55e-08  |g|= 0.000113  |ddm|= 0.00033
+  HOMO = 0.567319766738038  LUMO = 0.868471379669565
+cycle= 41 E= -2909.29492874684  delta_E= -1.36e-08  |g|= 0.000113  |ddm|= 0.000153
+  HOMO = 0.567319792525216  LUMO = 0.868471435065923
+cycle= 42 E= -2909.29492876906  delta_E= -2.22e-08  |g|= 0.000113  |ddm|= 0.000244
+  HOMO = 0.56731975184813  LUMO = 0.868471391418936
+cycle= 43 E= -2909.29492877025  delta_E= -1.19e-09  |g|= 0.000113  |ddm|= 8.16e-05
+  HOMO = 0.567319695086947  LUMO = 0.86847140570199
+cycle= 44 E= -2909.29492876804  delta_E= 2.2e-09  |g|= 0.000113  |ddm|= 8.06e-05
+  HOMO = 0.5673196952416  LUMO = 0.868471410978269
+cycle= 45 E= -2909.29492876638  delta_E= 1.67e-09  |g|= 0.000113  |ddm|= 3.16e-05
+  HOMO = 0.567319688969753  LUMO = 0.868471401041658
+cycle= 46 E= -2909.29492876541  delta_E= 9.69e-10  |g|= 0.000113  |ddm|= 2.67e-05
+  HOMO = 0.567319691296511  LUMO = 0.868471386392656
+cycle= 47 E= -2909.29492877021  delta_E= -4.8e-09  |g|= 0.000113  |ddm|= 0.000181
+  HOMO = 0.567319820006166  LUMO = 0.868471495619364
+cycle= 48 E= -2909.29492877969  delta_E= -9.49e-09  |g|= 0.000113  |ddm|= 0.000108
+  HOMO = 0.56731987430858  LUMO = 0.868471477397495
+cycle= 49 E= -2909.29492876958  delta_E= 1.01e-08  |g|= 0.000113  |ddm|= 0.000109
+  HOMO = 0.567319865196134  LUMO = 0.868471465564068
+cycle= 50 E= -2909.29492877841  delta_E= -8.83e-09  |g|= 0.000113  |ddm|= 9.52e-05
+  HOMO = 0.567319700937459  LUMO = 0.868471381802739
+cycle= 51 E= -2909.29492874848  delta_E= 2.99e-08  |g|= 0.000112  |ddm|= 0.000331
+  HOMO = 0.567320095469417  LUMO = 0.868471566340676
+cycle= 52 E= -2909.29492871068  delta_E= 3.78e-08  |g|= 0.000112  |ddm|= 0.000438
+  HOMO = 0.56731910861288  LUMO = 0.86847185184069
+cycle= 53 E= -2909.29492856811  delta_E= 1.43e-07  |g|= 0.000106  |ddm|= 0.00218
+  HOMO = 0.567319807091106  LUMO = 0.868471354215785
+cycle= 54 E= -2909.29492836943  delta_E= 1.99e-07  |g|= 8.95e-05  |ddm|= 0.00601
+  HOMO = 0.567319879237628  LUMO = 0.868471414514638
+cycle= 55 E= -2909.29492835792  delta_E= 1.15e-08  |g|= 8.69e-05  |ddm|= 0.00165
+  HOMO = 0.567320194693621  LUMO = 0.868471215474894
+cycle= 56 E= -2909.29492833477  delta_E= 2.32e-08  |g|= 8.56e-05  |ddm|= 0.00106
+  HOMO = 0.567320277046442  LUMO = 0.868471288479694
+cycle= 57 E= -2909.29492833656  delta_E= -1.79e-09  |g|= 8.55e-05  |ddm|= 3.44e-05
+  HOMO = 0.567320263559041  LUMO = 0.868471397118844
+cycle= 58 E= -2909.29492834159  delta_E= -5.03e-09  |g|= 8.58e-05  |ddm|= 8.97e-05
+  HOMO = 0.567320281690746  LUMO = 0.868471092657464
+cycle= 59 E= -2909.29492832282  delta_E= 1.88e-08  |g|= 8.48e-05  |ddm|= 0.000326
+  HOMO = 0.567321250432334  LUMO = 0.868471236946894
+cycle= 60 E= -2909.29492824766  delta_E= 7.52e-08  |g|= 7.96e-05  |ddm|= 0.0015
+  HOMO = 0.567320353359404  LUMO = 0.86847085982716
+cycle= 61 E= -2909.29492824112  delta_E= 6.54e-09  |g|= 7.81e-05  |ddm|= 0.000428
+  HOMO = 0.567321006705608  LUMO = 0.86847057989031
+cycle= 62 E= -2909.2949282101  delta_E= 3.1e-08  |g|= 7.58e-05  |ddm|= 0.000599
+  HOMO = 0.567320641213541  LUMO = 0.868470833563449
+cycle= 63 E= -2909.29492819283  delta_E= 1.73e-08  |g|= 7.43e-05  |ddm|= 0.000526
+  HOMO = 0.567321076576561  LUMO = 0.868470539487359
+cycle= 64 E= -2909.29492818036  delta_E= 1.25e-08  |g|= 7.13e-05  |ddm|= 0.001
+  HOMO = 0.567320923298737  LUMO = 0.868470616009947
+cycle= 65 E= -2909.29492816705  delta_E= 1.33e-08  |g|= 6.78e-05  |ddm|= 0.00124
+  HOMO = 0.567320946649934  LUMO = 0.868470530238555
+cycle= 66 E= -2909.29492816073  delta_E= 6.32e-09  |g|= 6.61e-05  |ddm|= 0.000415
+  HOMO = 0.56732127556372  LUMO = 0.868470975240169
+cycle= 67 E= -2909.29492816935  delta_E= -8.62e-09  |g|= 6.53e-05  |ddm|= 0.000315
+  HOMO = 0.567321503058333  LUMO = 0.868471301154079
+cycle= 68 E= -2909.29492816257  delta_E= 6.77e-09  |g|= 6.14e-05  |ddm|= 0.000421
+  HOMO = 0.567320912314856  LUMO = 0.868471024023781
+cycle= 69 E= -2909.29492816895  delta_E= -6.37e-09  |g|= 5.58e-05  |ddm|= 0.00055
+  HOMO = 0.567321359243355  LUMO = 0.868471518479353
+cycle= 70 E= -2909.29492816347  delta_E= 5.48e-09  |g|= 5.25e-05  |ddm|= 0.000872
+  HOMO = 0.56732061584895  LUMO = 0.868471944339234
+cycle= 71 E= -2909.29492816924  delta_E= -5.77e-09  |g|= 4.92e-05  |ddm|= 0.000561
+  HOMO = 0.567320717256562  LUMO = 0.868471720622499
+cycle= 72 E= -2909.29492816787  delta_E= 1.37e-09  |g|= 4.81e-05  |ddm|= 0.000184
+  HOMO = 0.567320464243913  LUMO = 0.868471800602753
+cycle= 73 E= -2909.29492817107  delta_E= -3.21e-09  |g|= 4.78e-05  |ddm|= 0.000328
+  HOMO = 0.567320523002175  LUMO = 0.868471766031831
+cycle= 74 E= -2909.29492817331  delta_E= -2.23e-09  |g|= 4.73e-05  |ddm|= 0.000235
+  HOMO = 0.567320590239767  LUMO = 0.868471779370067
+cycle= 75 E= -2909.29492817896  delta_E= -5.66e-09  |g|= 4.66e-05  |ddm|= 0.000583
+  HOMO = 0.567320488057666  LUMO = 0.868471509075492
+cycle= 76 E= -2909.29492818404  delta_E= -5.08e-09  |g|= 4.68e-05  |ddm|= 0.000279
+  HOMO = 0.567320570032646  LUMO = 0.868471560995105
+cycle= 77 E= -2909.29492818567  delta_E= -1.63e-09  |g|= 4.64e-05  |ddm|= 0.000155
+  HOMO = 0.567320639397317  LUMO = 0.868471590048835
+cycle= 78 E= -2909.29492818654  delta_E= -8.76e-10  |g|= 4.66e-05  |ddm|= 6.02e-05
+  HOMO = 0.567320690475324  LUMO = 0.868471661764482
+cycle= 79 E= -2909.2949281876  delta_E= -1.06e-09  |g|= 4.67e-05  |ddm|= 0.000114
+  HOMO = 0.567320648909568  LUMO = 0.86847170526249
+cycle= 80 E= -2909.29492818782  delta_E= -2.23e-10  |g|= 4.66e-05  |ddm|= 8.18e-05
+  HOMO = 0.567320680884947  LUMO = 0.868471599179287
+cycle= 81 E= -2909.29492818954  delta_E= -1.72e-09  |g|= 4.69e-05  |ddm|= 8.76e-05
+  HOMO = 0.567320741788867  LUMO = 0.868471556742947
+cycle= 82 E= -2909.29492818735  delta_E= 2.19e-09  |g|= 4.69e-05  |ddm|= 8.66e-05
+  HOMO = 0.567320589271427  LUMO = 0.868471607951938
+cycle= 83 E= -2909.29492817323  delta_E= 1.41e-08  |g|= 4.63e-05  |ddm|= 0.0007
+  HOMO = 0.567320701086625  LUMO = 0.868471713716618
+cycle= 84 E= -2909.29492814686  delta_E= 2.64e-08  |g|= 4.36e-05  |ddm|= 0.0012
+  HOMO = 0.567320660728143  LUMO = 0.868471756252717
+cycle= 85 E= -2909.29492814533  delta_E= 1.53e-09  |g|= 4.35e-05  |ddm|= 0.000104
+  HOMO = 0.567320634832679  LUMO = 0.868471742300572
+cycle= 86 E= -2909.29492814522  delta_E= 1.11e-10  |g|= 4.34e-05  |ddm|= 8.24e-05
+  HOMO = 0.567320557881558  LUMO = 0.868471714615005
+cycle= 87 E= -2909.29492814502  delta_E= 2.02e-10  |g|= 4.33e-05  |ddm|= 0.000265
+  HOMO = 0.567320589715861  LUMO = 0.868471740319539
+cycle= 88 E= -2909.2949281467  delta_E= -1.68e-09  |g|= 4.33e-05  |ddm|= 0.000217
+  HOMO = 0.567320553459895  LUMO = 0.868471762545119
+cycle= 89 E= -2909.2949281462  delta_E= 5.08e-10  |g|= 4.33e-05  |ddm|= 2.34e-05
+  HOMO = 0.567320541651705  LUMO = 0.868471748180852
+cycle= 90 E= -2909.29492814655  delta_E= -3.51e-10  |g|= 4.32e-05  |ddm|= 6.78e-05
+  HOMO = 0.567320629173337  LUMO = 0.868471795920679
+cycle= 91 E= -2909.29492814596  delta_E= 5.91e-10  |g|= 4.33e-05  |ddm|= 0.000177
+  HOMO = 0.567320662492562  LUMO = 0.868471763423999
+cycle= 92 E= -2909.29492815028  delta_E= -4.32e-09  |g|= 4.36e-05  |ddm|= 0.000269
+  HOMO = 0.567320662980037  LUMO = 0.868471764171416
+cycle= 93 E= -2909.29492814908  delta_E= 1.2e-09  |g|= 4.36e-05  |ddm|= 6.36e-05
+  HOMO = 0.56732056637766  LUMO = 0.868471859593066
+cycle= 94 E= -2909.29492814049  delta_E= 8.58e-09  |g|= 4.3e-05  |ddm|= 0.000361
+  HOMO = 0.56732042859319  LUMO = 0.868471840014835
+cycle= 95 E= -2909.2949281326  delta_E= 7.89e-09  |g|= 4.23e-05  |ddm|= 0.000409
+  HOMO = 0.56732033057901  LUMO = 0.868471850125185
+cycle= 96 E= -2909.29492812193  delta_E= 1.07e-08  |g|= 4.13e-05  |ddm|= 0.000651
+  HOMO = 0.567320657882544  LUMO = 0.868471952064002
+cycle= 97 E= -2909.29492812328  delta_E= -1.35e-09  |g|= 4.13e-05  |ddm|= 0.000268
+  HOMO = 0.567320447752377  LUMO = 0.868472049938206
+cycle= 98 E= -2909.29492811779  delta_E= 5.49e-09  |g|= 4.06e-05  |ddm|= 0.000264
+  HOMO = 0.567320610194021  LUMO = 0.868471816461904
+cycle= 99 E= -2909.29492812039  delta_E= -2.6e-09  |g|= 4.01e-05  |ddm|= 0.000549
+  HOMO = 0.567320569205576  LUMO = 0.868471898750684
+cycle= 100 E= -2909.29492812125  delta_E= -8.53e-10  |g|= 4e-05  |ddm|= 0.000162
+SCF not converged.
+SCF energy = -2909.29492812125
+
+
+
+
+******** <class 'pyscf.soscf.newton_ah.SecondOrderROHF'> ********
+method = SecondOrderROHF
+initial guess = chk
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-10
+SCF conv_tol_grad = None
+SCF max_cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = NiO_8.chk
+max_memory 750000 MB (current use 307253 MB)
+******** PBC SCF flags ********
+kpt = [0. 0. 0.]
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7fe98f3d9160>
+number of electrons per cell  alpha = 192 beta = 192
+******** <class 'pyscf.pbc.scf.rohf.ROHF'> Newton solver flags ********
+SCF tol = 1e-10
+conv_tol_grad = None
+max. SCF cycles = 100
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = NiO_8.chk
+max_cycle_inner = 12
+max_stepsize = 0.05
+ah_start_tol = 1e+09
+ah_level_shift = 0
+ah_conv_tol = 1e-12
+ah_lindep = 1e-14
+ah_start_cycle = 1
+ah_max_cycle = 40
+ah_grad_trust_region = 2.5
+kf_interval = 4
+kf_trust_region = 5
+canonicalization = True
+max_memory 750000 MB (current use 307253 MB)
+Set conv_tol_grad to 1e-05
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+  HOMO = 0.567320513819362  LUMO = 0.868471838679789
+Initial guess E= -2909.29492812125  |g|= 4.00227e-05
+macro= 0  E= -2909.29492799729  delta_E= 1.23956e-07  |g|= 4.00227e-05  1 KF 6 JK
+macro= 1  E= -2909.29492818155  delta_E= -1.84263e-07  |g|= 0.000186566  2 KF 20 JK
+macro= 2  E= -2909.29492813584  delta_E= 4.57112e-08  |g|= 2.0328e-05  3 KF 29 JK
+macro= 3  E= -2909.29492813415  delta_E= 1.69348e-09  |g|= 1.92904e-05  1 KF 9 JK
+macro= 4  E= -2909.29492813415  delta_E= -4.54747e-13  |g|= 3.5546e-06  1 KF 2 JK
+Canonicalize SCF orbitals
+macro X = 5  E=-2909.29492813415  |g|= 3.5546e-06  total 9 KF 72 JK
+converged SCF energy = -2909.29492813415
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.042307e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.056758e-04 ; sigma = 8.799186e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 7.769512e-07 ; sigma = 4.541354e-08 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.708675e-08 ; sigma = 1.878675e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 3 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 5.601539e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.325581e-04 ; sigma = 1.110571e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 2.702978e-06 ; sigma = 4.444150e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 9.198508e-07 ; sigma = 4.431087e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.744139e-07 ; sigma = 3.421974e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 5.601473e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.330589e-04 ; sigma = 1.110394e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 2.553503e-06 ; sigma = 4.360242e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 2.384687e-06 ; sigma = 1.012523e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.615509e-07 ; sigma = 3.799983e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.092176e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 8.624763e-04 ; sigma = 1.027087e-01 ; 7/8 fragment CI solvers converged
+Cycle 2: max grad = 1.733549e-03 ; sigma = 2.250552e-03 ; 7/8 fragment CI solvers converged
+Cycle 3: max grad = 1.044074e-04 ; sigma = 1.840733e-04 ; 7/8 fragment CI solvers converged
+Cycle 4: max grad = 7.227096e-05 ; sigma = 3.205322e-05 ; 7/8 fragment CI solvers converged
+Cycle 5: max grad = 4.036835e-06 ; sigma = 3.128782e-07 ; 8/8 fragment CI solvers converged
+Cycle 6: max grad = 1.660659e-06 ; sigma = 3.514867e-08 ; 8/8 fragment CI solvers converged
+Cycle 7: max grad = 1.250609e-06 ; sigma = 1.645617e-10 ; 8/8 fragment CI solvers converged
+Cycle 8: max grad = 1.207034e-06 ; sigma = 2.499689e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 8 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.091735e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 8.863873e-04 ; sigma = 1.029184e-01 ; 7/8 fragment CI solvers converged
+Cycle 2: max grad = 1.754868e-03 ; sigma = 2.204187e-03 ; 7/8 fragment CI solvers converged
+Cycle 3: max grad = 1.081570e-04 ; sigma = 1.892996e-04 ; 7/8 fragment CI solvers converged
+Cycle 4: max grad = 7.920600e-05 ; sigma = 3.538751e-05 ; 7/8 fragment CI solvers converged
+Cycle 5: max grad = 4.061801e-06 ; sigma = 3.752877e-07 ; 8/8 fragment CI solvers converged
+Cycle 6: max grad = 1.934094e-06 ; sigma = 4.375036e-08 ; 8/8 fragment CI solvers converged
+Cycle 7: max grad = 1.136480e-06 ; sigma = 2.224994e-10 ; 8/8 fragment CI solvers converged
+Cycle 8: max grad = 1.102947e-06 ; sigma = 3.262812e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 8 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.091749e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 8.060747e-04 ; sigma = 1.029393e-01 ; 7/8 fragment CI solvers converged
+Cycle 2: max grad = 1.737264e-03 ; sigma = 2.178867e-03 ; 7/8 fragment CI solvers converged
+Cycle 3: max grad = 1.072945e-04 ; sigma = 1.854101e-04 ; 7/8 fragment CI solvers converged
+Cycle 4: max grad = 7.846033e-05 ; sigma = 3.481536e-05 ; 7/8 fragment CI solvers converged
+Cycle 5: max grad = 4.078168e-06 ; sigma = 3.682273e-07 ; 8/8 fragment CI solvers converged
+Cycle 6: max grad = 1.933297e-06 ; sigma = 4.392197e-08 ; 8/8 fragment CI solvers converged
+Cycle 7: max grad = 1.218446e-06 ; sigma = 2.223999e-10 ; 8/8 fragment CI solvers converged
+Cycle 8: max grad = 1.121734e-06 ; sigma = 3.406342e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 8 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.092162e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 8.681966e-04 ; sigma = 1.026516e-01 ; 7/8 fragment CI solvers converged
+Cycle 2: max grad = 1.769071e-03 ; sigma = 2.317346e-03 ; 7/8 fragment CI solvers converged
+Cycle 3: max grad = 1.076735e-04 ; sigma = 1.910429e-04 ; 7/8 fragment CI solvers converged
+Cycle 4: max grad = 7.604167e-05 ; sigma = 3.476046e-05 ; 7/8 fragment CI solvers converged
+Cycle 5: max grad = 4.274543e-06 ; sigma = 3.464307e-07 ; 8/8 fragment CI solvers converged
+Cycle 6: max grad = 1.755187e-06 ; sigma = 3.895266e-08 ; 8/8 fragment CI solvers converged
+Cycle 7: max grad = 1.301771e-06 ; sigma = 1.835332e-10 ; 8/8 fragment CI solvers converged
+Cycle 8: max grad = 1.228613e-06 ; sigma = 2.424372e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 8 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 5.601473e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.330586e-04 ; sigma = 1.110394e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 2.553619e-06 ; sigma = 4.360385e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 2.384799e-06 ; sigma = 1.014371e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.617469e-07 ; sigma = 3.801404e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 5.601539e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.325585e-04 ; sigma = 1.110570e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 2.702813e-06 ; sigma = 4.443949e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 9.197983e-07 ; sigma = 4.430234e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 9.743374e-07 ; sigma = 3.407763e-11 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.348258e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.145480e-04 ; sigma = 1.078868e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.606080e-06 ; sigma = 1.713511e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.918196e-07 ; sigma = 5.027090e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 1.012554e-08 ; sigma = 1.065814e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.321643e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.101268e-04 ; sigma = 1.078658e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.149595e-06 ; sigma = 1.453664e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 8.675213e-08 ; sigma = 2.147971e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 3.138218e-09 ; sigma = 1.563194e-13 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.082376e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.527477e-03 ; sigma = 8.838701e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 8.172665e-05 ; sigma = 1.494639e-04 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.560395e-06 ; sigma = 1.178274e-06 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 1.808491e-07 ; sigma = 8.380283e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 7.742831e-09 ; sigma = 5.769607e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.082655e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.525265e-03 ; sigma = 8.838324e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 8.202485e-05 ; sigma = 1.492083e-04 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.575837e-06 ; sigma = 1.184194e-06 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 1.825600e-07 ; sigma = 8.462848e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 7.819637e-09 ; sigma = 5.883294e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.082644e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.525276e-03 ; sigma = 8.838319e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 8.202040e-05 ; sigma = 1.492106e-04 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.575233e-06 ; sigma = 1.183993e-06 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 1.825191e-07 ; sigma = 8.461853e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 7.817043e-09 ; sigma = 5.911716e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.082387e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.527466e-03 ; sigma = 8.838707e-02 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 8.173092e-05 ; sigma = 1.494615e-04 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 3.560970e-06 ; sigma = 1.178464e-06 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 1.808880e-07 ; sigma = 8.384546e-10 ; 8/8 fragment CI solvers converged
+Cycle 5: max grad = 7.745288e-09 ; sigma = 5.854872e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.321634e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.101290e-04 ; sigma = 1.078658e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.149682e-06 ; sigma = 1.453760e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 8.680510e-08 ; sigma = 2.149960e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 3.140316e-09 ; sigma = 1.705303e-13 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 4.348271e-02 ; sigma = 0.000000e+00 ; 0/8 fragment CI solvers converged
+Cycle 1: max grad = 1.145377e-04 ; sigma = 1.078868e-01 ; 8/8 fragment CI solvers converged
+Cycle 2: max grad = 1.600505e-06 ; sigma = 1.713147e-07 ; 8/8 fragment CI solvers converged
+Cycle 3: max grad = 1.914736e-07 ; sigma = 5.020269e-10 ; 8/8 fragment CI solvers converged
+Cycle 4: max grad = 1.008256e-08 ; sigma = 1.293188e-12 ; 8/8 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+LASCI state-average energy = -2885.8556208465
+LASCI state 0 energy = -2886.1723531873
+LASCI state 1 energy = -2886.5505933238
+LASCI state 2 energy = -2886.55177939054
+LASCI state 3 energy = -2886.47326525379
+LASCI state 4 energy = -2886.47393413056
+LASCI state 5 energy = -2886.47393405133
+LASCI state 6 energy = -2886.47326532636
+LASCI state 7 energy = -2886.55177949329
+LASCI state 8 energy = -2886.55059325248
+LASCI state 9 energy = -2885.11317249981
+LASCI state 10 energy = -2885.11320849318
+LASCI state 11 energy = -2885.2056162384
+LASCI state 12 energy = -2885.20503121685
+LASCI state 13 energy = -2885.20503267289
+LASCI state 14 energy = -2885.20561481947
+LASCI state 15 energy = -2885.11320647181
+LASCI state 16 energy = -2885.11317456869
+******** LAS space tables ********
+LAS space 0: (64e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.1723531873
+S^2 = 0.0000000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 1: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.5505933238
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+7e,10o)     2    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 2: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.55177939054
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+7e,10o)     2    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 3: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.47326525379
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+7e,10o)     2    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 4: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.47393413056
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+7e,10o)     2    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 5: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.47393405133
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+7e,10o)     2    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 6: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.47326532636
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+7e,10o)     2    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 7: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.55177949329
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+7e,10o)     2    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 8: (64e+63e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2886.55059325248
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+7e,10o)     2    A        1
+LAS space 9: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.11317249981
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (9e+8e,10o)     2    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 10: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.11320849318
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (9e+8e,10o)     2    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 11: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.2056162384
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (9e+8e,10o)     2    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 12: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.20503121685
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (9e+8e,10o)     2    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 13: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.20503267289
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (9e+8e,10o)     2    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 14: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.20561481947
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (9e+8e,10o)     2    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 15: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.11320647181
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (9e+8e,10o)     2    A        1
+    7   (8e+8e,10o)     1    A        1
+LAS space 16: (65e+64e,80o) wfynsm=A
+Converged? True
+E(LAS) = -2885.11317456869
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0   (8e+8e,10o)     1    A        1
+    1   (8e+8e,10o)     1    A        1
+    2   (8e+8e,10o)     1    A        1
+    3   (8e+8e,10o)     1    A        1
+    4   (8e+8e,10o)     1    A        1
+    5   (8e+8e,10o)     1    A        1
+    6   (8e+8e,10o)     1    A        1
+    7   (9e+8e,10o)     2    A        1
+LASSI op_o0 memory check: 5.253095365845652e+28 MB needed of 439989.77536 MB available (750000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Symmetry analysis of 17 LAS rootspaces:
+ ix            Energy  <S**2>  Neleca  Nelecb  Nelec   Wfnsym
+  0  -2886.1723531873   0.000      64      64     128       A
+  1  -2886.5505933238   0.750      64      63     127       A
+  2  -2886.5517793905   0.750      64      63     127       A
+  3  -2886.4732652538   0.750      64      63     127       A
+  4  -2886.4739341306   0.750      64      63     127       A
+  5  -2886.4739340513   0.750      64      63     127       A
+  6  -2886.4732653264   0.750      64      63     127       A
+  7  -2886.5517794933   0.750      64      63     127       A
+  8  -2886.5505932525   0.750      64      63     127       A
+  9  -2885.1131724998   0.750      65      64     129       A
+ 10  -2885.1132084932   0.750      65      64     129       A
+ 11  -2885.2056162384   0.750      65      64     129       A
+ 12  -2885.2050312169   0.750      65      64     129       A
+ 13  -2885.2050326729   0.750      65      64     129       A
+ 14  -2885.2056148195   0.750      65      64     129       A
+ 15  -2885.1132064718   0.750      65      64     129       A
+ 16  -2885.1131745687   0.750      65      64     129       A
+Build + diag H matrix LASSI symmetry block 0
+['neleca', 'nelecb', 'irrep'] = (64, 64, 0)
+(1 rootspaces; 1 states)
+Build + diag H matrix LASSI symmetry block 1
+['neleca', 'nelecb', 'irrep'] = (65, 64, 0)
+(8 rootspaces; 8 states)
+8/8 linearly independent model states
+Build + diag H matrix LASSI symmetry block 2
+['neleca', 'nelecb', 'irrep'] = (64, 63, 0)
+(8 rootspaces; 8 states)
+8/8 linearly independent model states
+LASSI eigenvalues (17 total):
+ ix            Energy  <S**2>  Neleca  Nelecb  Wfnsym
+  0  -2886.5524510612   0.750      64      63       A
+  1  -2886.5524017816   0.750      64      63       A
+  2  -2886.5506335719   0.750      64      63       A
+  3  -2886.5493218299   0.750      64      63       A
+  4  -2886.4745198141   0.750      64      63       A
+  5  -2886.4742140020   0.750      64      63       A
+  6  -2886.4732374362   0.750      64      63       A
+  7  -2886.4723647253   0.750      64      63       A
+  8  -2886.1723531873   0.000      64      64       A
+  9  -2885.2079461114   0.750      65      64       A
+ 10  -2885.2071167598   0.750      65      64       A
+ 11  -2885.2038463873   0.750      65      64       A
+ 12  -2885.2023862197   0.750      65      64       A
+ 13  -2885.1176552837   0.750      65      64       A
+ 14  -2885.1164844605   0.750      65      64       A
+ 15  -2885.1094163656   0.750      65      64       A
+ 16  -2885.1092053930   0.750      65      64       A
+Building t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE functional
+Hybrid functional with [0.25, 0.25] CASSCF exchange
+Building t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE functional
+Hybrid functional with [0.25, 0.25] CASSCF exchange
+Periodic OT-FNAL class is used
+LASSI op_o0 memory check: 5.253095365845652e+28 MB needed of 439959.919616 MB available (750000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 0 E = -2932.1595232775603, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.6103113916536
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 1 E = -2932.1431400951947, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.61569263020172
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 2 E = -2932.141877964577, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.61584292657298
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 3 E = -2932.1566317750053, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.61210303330674
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 4 E = -2932.062327223158, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.6151862545061
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 5 E = -2932.0684456245544, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.61242440133364
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 6 E = -2932.0608636321626, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.61562025138966
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 7 E = -2932.0665365934947, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -246.61361117407577
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 8 E = -2931.7279206968897, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -247.5006227899719
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 9 E = -2931.0869462804594, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.29912374985093
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 10 E = -2931.086533370362, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.29948668257094
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 11 E = -2931.083631441338, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.30112197984013
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 12 E = -2931.082633698295, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.3015759543235
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 13 E = -2931.0048727597814, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.3072237072271
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 14 E = -2931.0038686612993, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.30778905433434
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 15 E = -2930.997961630892, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.31107091554392
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [37 37 37] (50653 PWs)
+ke_cutoff = 17.165389279564792
+omega = 0.44884386251453634
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+MC-PDFT state 16 E = -2930.997796531736, Eot(t0.25*HF + 0.75*PBE, 0.25*HF + 0.75*PBE) = -248.31100430411263

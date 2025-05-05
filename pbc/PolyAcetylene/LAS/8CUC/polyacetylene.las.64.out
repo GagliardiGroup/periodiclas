@@ -1,0 +1,45 @@
+/project/lgagliardi/jangidbhavnesh/Re/Final/PolyAcetyleneChain/Repeat/8CUC/polyacetylene.las.py:11: FutureWarning: Most MC-PDFT and MC-DCFT modules have been moved to pyscf-forge (github.com/pyscf/pyscf-forge) and will be removed from mrh soon.
+  from mrh.my_pyscf import mcpdft
+output file: PAChain.8.64.log
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+tot grids = 1529395
+cell vol = 163350.185  sum(weights) = 118173.926
+Results: LASSI 
+Ionization Energy:  6.836918064723655
+ElectAtt   Energy:  -1.5323517156709447
+Band Gap:  8.3692697803946
+Results: PDFT
+Ionization Energy:  4.050998380136624
+ElectAtt   Energy:  3.2110623257161386
+Band Gap:  0.8399360544204857

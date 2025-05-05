@@ -1,0 +1,432 @@
+#INFO: **** input file is /project/lgagliardi/jangidbhavnesh/Re/Final/H-Chain/LAS/hchain.py ****
+import os
+import sys
+import pickle
+import numpy as np
+from pyscf import lib
+from pyscf.pbc import scf, df
+from pyscf.pbc import gto as pgto
+from mrh.my_pyscf.mcscf.lasscf_o0 import LASSCF
+from mrh.my_pyscf.lassi import lassi
+from periodiclas.tools import sign_control, util
+
+def getCell(nH, nHFrag, maxMem=200000, R=1.4):
+    """
+    Build the Cell object
+    """
+    cell = pgto.Cell()
+    cell.basis='STO-6G'
+    cell.a = np.diag([17.5, 17.5, nH * R])
+    cell.atom = [['H', np.array([0, 0, i*R]) ] for i in range(nH)]
+    cell.verbose = lib.logger.INFO
+    cell.output = f"HChain.{nHFrag}.{nH}.log"
+    cell.max_memory = maxMem
+    cell.precision = 1e-12
+    cell.build()
+    return cell
+
+def get_gdf(filename, restart=True):
+    """
+    Calculate the 2e Integrals
+    Using the Gaussian Density Fitting.
+    """
+    if not os.path.exists(filename) or restart:
+        gdf = df.GDF(cell)
+        gdf._cderi_to_save = filename
+        gdf.build()
+    return filename
+
+def runSCF(cell, nH):
+    """
+    Mean-Field Calculation
+    """
+    kmf = scf.ROHF(cell).density_fit()
+    kmf.max_cycle=1000
+    kmf.chkfile = f'Hchain.{nH}.chk'
+    kmf.with_df._cderi = get_gdf(kmf.chkfile.rstrip('.chk')+'.h5')
+    kmf.exxdiv = None
+    kmf.conv_tol = 1e-12
+    kmf.kernel()
+
+    if not kmf.converged:
+        kmf.newton().run()
+
+    assert kmf, "mean-field didn't converge"
+    return kmf
+
+def genModelSpace(nfrags):
+    """
+    Model Space Creation for LAS Band Structure
+    """
+    identity = np.eye(nfrags, dtype=int)
+    las_charges = [[0] * nfrags] + identity.tolist() + (-identity).tolist()
+    las_spins = [[0] * nfrags] + identity.tolist() + identity.tolist()
+    las_smults = [[1] * nfrags] + (identity + 1).tolist() + (identity + 1).tolist()
+                    
+    nrootspaces = len(las_charges)
+    las_weights = np.full(nrootspaces, 1/nrootspaces)
+                                
+    return las_weights, las_charges, las_spins, las_smults
+
+# Running LASSCF
+def runLASSCF(nHfrag, nfrags, kmf):
+    """
+    Optimize the Individual Fragment LAS
+    """
+
+    # Active Space
+    norb  = tuple([nHfrag,]*nfrags)
+    nele  = tuple([nHfrag,]*nfrags)
+    nspin = tuple([1,]*nfrags)
+    
+    # Fragmentation
+    frags =tuple([list(range(nH))[i:i + nHfrag] \
+            for i in range(0,nH, nHfrag)])
+    
+    las = LASSCF(kmf, norb, nele, spin_sub=nspin)
+    las.mo_coeff = las.localize_init_guess(frags,kmf.mo_coeff)
+    las.mo_coeff = sign_control.fix_mos(las)
+    las_weights,las_charges,las_spins,las_smults=genModelSpace(nfrags)
+    las = las.state_average(las_weights,las_charges,las_spins,las_smults)
+    las.lasci_()
+    return las
+
+def processlas(las):
+    """
+    Sign-Fixing for the LAS CI Vectos
+    """
+    las.ci = sign_control.fix_sign(las)
+    las.dump_spaces()
+    return las
+
+def runLASSI(las):
+    """
+    LAS State Interaction
+    """
+    lsi = lassi.LASSI(las)
+    energies_lassi, civecs_lassi = lsi.kernel()
+    return lsi, energies_lassi
+
+def savepickel(mf, lsi, R=1.4,  pdftenergy=0, nHfrag=2, nH=2):
+    """
+    Save the LAS Band Structure Data
+    """
+
+    civec = lsi.get_sivec_vacuum_shuffle(state=0)
+    nfrags = int(nH/nHfrag)
+    charges = util.las_charges(lsi._las)
+
+    data = {"energies_lassi":lsi.e_roots,
+            "civecs":civec,
+            "charges":charges,
+            "nfrags":nfrags,
+            "dist":R,
+            "mf_coeff":mf.mo_coeff,
+            "mf_occ":mf.mo_occ,
+            "mf_ene":mf.mo_energy}
+
+    with open(f"hchain.{nHfrag}.{nH}.pkl", "wb") as f:
+        pickle.dump(data, f)
+
+if __name__ == "__main__":
+
+    for nH in [8, 16, 32, 64]:
+        for i in [2, 4, 8]:
+            nHfrag = min(i, nH)
+            nfrags = int(nH/nHfrag)
+            R = 1.4 # Distance between the H-atoms
+
+            cell =  getCell(nH, nHfrag, maxMem=200000, R=R)
+            kmf = runSCF(cell, nH)
+
+            las = runLASSCF(nHfrag, nfrags, kmf)
+            las = processlas(las)
+            lsi, energies_lassi = runLASSI(las)
+            
+            # Save data
+            savepickel(kmf, lsi, R=R, nHfrag=nHfrag, nH=nH)
+    
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='midway3-0555.rcc.local', release='4.18.0-305.3.1.el8.x86_64', version='#1 SMP Tue Jun 1 16:14:33 UTC 2021', machine='x86_64')  Threads 128
+Python 3.9.13 (main, Aug 25 2022, 23:26:10) 
+[GCC 11.2.0]
+numpy 1.26.2  scipy 1.11.4  h5py 3.10.0
+Date: Sat Mar 15 11:49:43 2025
+PySCF version 2.8.0
+PySCF path  /home/jangidbhavnesh/bin/pyscf
+GIT ORIG_HEAD a0665c4a7bf54e33f01295b3eea390be7a17d76d
+GIT HEAD (branch master) 6f6d3741bf42543e02ccaa1d4ef43d9bf83b3dda
+mrh path  /home/jangidbhavnesh/bin/mrh
+GIT ORIG_HEAD ed1f605b415d72e71fb56d97b9d163809b62b172
+GIT HEAD (branch master) ea89791c15c26abd3b0f0efdeadd7a286ca4585a
+
+[ENV] PYSCF_EXT_PATH /home/jangidbhavnesh/bin/pyscf:/home/jangidbhavnesh/bin/pyscf-forge:/home/jangidbhavnesh/bin/dmrgscf:/home/jangidbhavnesh/bin:
+[CONFIG] conf_file /home/jangidbhavnesh/.pyscf_conf.py
+[INPUT] verbose = 4
+[INPUT] num. atoms = 8
+[INPUT] num. electrons = 8
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 H      0.000000000000   0.000000000000   0.000000000000 AA    0.000000000000   0.000000000000   0.000000000000 Bohr   0.0
+[INPUT]  2 H      0.000000000000   0.000000000000   1.400000000000 AA    0.000000000000   0.000000000000   2.645616574391 Bohr   0.0
+[INPUT]  3 H      0.000000000000   0.000000000000   2.800000000000 AA    0.000000000000   0.000000000000   5.291233148782 Bohr   0.0
+[INPUT]  4 H      0.000000000000   0.000000000000   4.200000000000 AA    0.000000000000   0.000000000000   7.936849723173 Bohr   0.0
+[INPUT]  5 H      0.000000000000   0.000000000000   5.600000000000 AA    0.000000000000   0.000000000000  10.582466297564 Bohr   0.0
+[INPUT]  6 H      0.000000000000   0.000000000000   7.000000000000 AA    0.000000000000   0.000000000000  13.228082871955 Bohr   0.0
+[INPUT]  7 H      0.000000000000   0.000000000000   8.400000000000 AA    0.000000000000   0.000000000000  15.873699446347 Bohr   0.0
+[INPUT]  8 H      0.000000000000   0.000000000000   9.800000000000 AA    0.000000000000   0.000000000000  18.519316020738 Bohr   0.0
+
+nuclear repulsion = 3.32403179925296
+number of shells = 8
+number of NR pGTOs = 48
+number of NR cGTOs = 8
+basis = STO-6G
+ecp = {}
+CPU time:       788.02
+lattice vectors  a1 [33.070207180, 0.000000000, 0.000000000]
+                 a2 [0.000000000, 33.070207180, 0.000000000]
+                 a3 [0.000000000, 0.000000000, 21.164932595]
+dimension = 3
+low_dim_ft_type = None
+Cell volume = 23146.8
+rcut = 24.293288226937268 (nimgs = [1 1 2])
+lattice sum = 47 cells
+precision = 1e-12
+pseudo = None
+ke_cutoff = 3527.180576457948
+    = [887 887 567] mesh (446098023 PWs)
+
+
+******** <class 'pyscf.pbc.df.df.GDF'> ********
+auxbasis = None
+exp_to_discard = None
+_cderi_to_save = Hchain.8.h5
+len(kpts) = 1
+ETB for H: l = 0, exps = 0.200224856 * 2^n , n = 0..8
+
+WARN: Even tempered Gaussians are generated as DF auxbasis for  H
+
+Drop 0 primitive fitting functions
+make aux basis, num shells = 72, num cGTOs = 72
+auxcell.rcut 17.068110412336893
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSGDFBuilder'> ********
+mesh = [57 57 37] (120213 PWs)
+ke_cutoff = 14.150506080873477
+omega = 0.4355387696361973
+exclude_d_aux = True
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.scf.rohf.ROHF'> ********
+method = ROHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-12
+SCF conv_tol_grad = None
+SCF max_cycles = 1000
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = Hchain.8.chk
+max_memory 200000 MB (current use 840 MB)
+******** PBC SCF flags ********
+kpt = [0. 0. 0.]
+Exchange divergence treatment (exxdiv) = None
+DF object = <pyscf.pbc.df.df.GDF object at 0x7f732ab63df0>
+number of electrons per cell  alpha = 4 beta = 4
+Set gradient conv threshold to 1e-06
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+init E= -2.45714988456278
+  HOMO = -0.0299263305938446  LUMO = -0.024343800383384
+cycle= 1 E= -3.41986962530713  delta_E= -0.963  |g|= 0.111  |ddm|= 1.51
+  HOMO = -0.131613571873992  LUMO = 0.0324764691742982
+cycle= 2 E= -3.43142910199781  delta_E= -0.0116  |g|= 0.028  |ddm|= 0.182
+  HOMO = -0.144045633873847  LUMO = 0.0453704157879608
+cycle= 3 E= -3.43220708134005  delta_E= -0.000778  |g|= 0.00108  |ddm|= 0.0617
+  HOMO = -0.143936870987167  LUMO = 0.0453810354216936
+cycle= 4 E= -3.43220818512662  delta_E= -1.1e-06  |g|= 0.000478  |ddm|= 0.002
+  HOMO = -0.143896134635271  LUMO = 0.0453798678678112
+cycle= 5 E= -3.43220841392581  delta_E= -2.29e-07  |g|= 2.94e-05  |ddm|= 0.00129
+  HOMO = -0.143917218378883  LUMO = 0.0453761374012651
+cycle= 6 E= -3.43220841511158  delta_E= -1.19e-09  |g|= 4.85e-06  |ddm|= 0.0001
+  HOMO = -0.143917310260389  LUMO = 0.0453761339042257
+cycle= 7 E= -3.43220841512451  delta_E= -1.29e-11  |g|= 1.23e-06  |ddm|= 8.66e-06
+  HOMO = -0.143916624630672  LUMO = 0.0453762709276837
+cycle= 8 E= -3.43220841512605  delta_E= -1.54e-12  |g|= 7.43e-08  |ddm|= 3.25e-06
+  HOMO = -0.143916683405428  LUMO = 0.045376262475538
+cycle= 9 E= -3.43220841512606  delta_E= -7.11e-15  |g|= 5.36e-10  |ddm|= 1.92e-07
+  HOMO = -0.143916683861508  LUMO = 0.0453762623531259
+Extra cycle  E= -3.43220841512606  delta_E= -1.78e-15  |g|= 1.93e-10  |ddm|= 1.41e-09
+converged SCF energy = -3.43220841512606
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.941426e-01 ; sigma = 0.000000e+00 ; 0/2 fragment CI solvers converged
+Cycle 1: max grad = 1.933278e-03 ; sigma = 0.000000e+00 ; 2/2 fragment CI solvers converged
+Cycle 2: max grad = 9.844184e-05 ; sigma = 1.776357e-15 ; 2/2 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 2 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.941426e-01 ; sigma = 0.000000e+00 ; 0/2 fragment CI solvers converged
+Cycle 1: max grad = 2.797718e-03 ; sigma = 7.280998e-02 ; 2/2 fragment CI solvers converged
+Cycle 2: max grad = 2.978469e-04 ; sigma = 3.328853e-05 ; 2/2 fragment CI solvers converged
+Cycle 3: max grad = 1.420516e-05 ; sigma = 1.729448e-07 ; 2/2 fragment CI solvers converged
+Cycle 4: max grad = 1.541521e-06 ; sigma = 8.994618e-10 ; 2/2 fragment CI solvers converged
+Cycle 5: max grad = 7.394556e-08 ; sigma = 4.674483e-12 ; 2/2 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.941426e-01 ; sigma = 0.000000e+00 ; 0/2 fragment CI solvers converged
+Cycle 1: max grad = 2.797718e-03 ; sigma = 7.280998e-02 ; 2/2 fragment CI solvers converged
+Cycle 2: max grad = 2.978469e-04 ; sigma = 3.328853e-05 ; 2/2 fragment CI solvers converged
+Cycle 3: max grad = 1.420516e-05 ; sigma = 1.729448e-07 ; 2/2 fragment CI solvers converged
+Cycle 4: max grad = 1.541521e-06 ; sigma = 8.994547e-10 ; 2/2 fragment CI solvers converged
+Cycle 5: max grad = 7.394555e-08 ; sigma = 4.676259e-12 ; 2/2 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 5 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.941426e-01 ; sigma = 0.000000e+00 ; 0/2 fragment CI solvers converged
+Cycle 1: max grad = 8.020720e-04 ; sigma = 6.479961e-02 ; 2/2 fragment CI solvers converged
+Cycle 2: max grad = 3.856591e-05 ; sigma = 1.279653e-06 ; 2/2 fragment CI solvers converged
+Cycle 3: max grad = 2.718996e-06 ; sigma = 5.047883e-09 ; 2/2 fragment CI solvers converged
+Cycle 4: max grad = 1.703555e-07 ; sigma = 2.138467e-11 ; 2/2 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+Entering product-state fixed-point CI iteration
+Cycle 0: max grad = 1.941426e-01 ; sigma = 0.000000e+00 ; 0/2 fragment CI solvers converged
+Cycle 1: max grad = 8.020720e-04 ; sigma = 6.479961e-02 ; 2/2 fragment CI solvers converged
+Cycle 2: max grad = 3.856591e-05 ; sigma = 1.279653e-06 ; 2/2 fragment CI solvers converged
+Cycle 3: max grad = 2.718996e-06 ; sigma = 5.047883e-09 ; 2/2 fragment CI solvers converged
+Cycle 4: max grad = 1.703555e-07 ; sigma = 2.139000e-11 ; 2/2 fragment CI solvers converged
+Product_state fixed-point CI iteration converged after 4 cycles
+LASCI state-average energy = -3.40516809697902
+LASCI state 0 energy = -3.62156332192894
+LASCI state 1 energy = -3.3353265333831
+LASCI state 2 energy = -3.3353265333831
+LASCI state 3 energy = -3.36681204809999
+LASCI state 4 energy = -3.36681204809999
+******** LAS space tables ********
+LAS space 0: (4e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -3.62156332192894
+S^2 = 0.0000000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (2e+2e,4o)     1    A        1
+    1    (2e+2e,4o)     1    A        1
+LAS space 1: (4e+3e,8o) wfynsm=A
+Converged? True
+E(LAS) = -3.3353265333831
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (2e+1e,4o)     2    A        1
+    1    (2e+2e,4o)     1    A        1
+LAS space 2: (4e+3e,8o) wfynsm=A
+Converged? True
+E(LAS) = -3.3353265333831
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (2e+2e,4o)     1    A        1
+    1    (2e+1e,4o)     2    A        1
+LAS space 3: (5e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -3.36681204809999
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (3e+2e,4o)     2    A        1
+    1    (2e+2e,4o)     1    A        1
+LAS space 4: (5e+4e,8o) wfynsm=A
+Converged? True
+E(LAS) = -3.36681204809999
+S^2 = 0.7500000 (Pure)
+Space table
+ frag    (ae+be,no)  2S+1   ir   lroots
+    0    (2e+2e,4o)     1    A        1
+    1    (3e+2e,4o)     2    A        1
+LASSI op_o0 memory check: 0.1396992 MB needed of 199183.470592 MB available (200000 MB max)
+
+
+******** <class 'pyscf.pbc.df.rsdf_builder._RSNucBuilder'> ********
+mesh = [65 65 41] (173225 PWs)
+ke_cutoff = 17.626088768626285
+omega = 0.48609237682611317
+exclude_d_aux = False
+exclude_dd_block = True
+j2c_eig_always = False
+has_long_range = True
+Symmetry analysis of 5 LAS rootspaces:
+ ix            Energy  <S**2>  Neleca  Nelecb  Nelec   Wfnsym
+  0     -3.6215633219   0.000       4       4       8       A
+  1     -3.3353265334   0.750       4       3       7       A
+  2     -3.3353265334   0.750       4       3       7       A
+  3     -3.3668120481   0.750       5       4       9       A
+  4     -3.3668120481   0.750       5       4       9       A
+Build + diag H matrix LASSI symmetry block 0
+['neleca', 'nelecb', 'irrep'] = (5, 4, 0)
+(2 rootspaces; 2 states)
+LASSI op_o0 memory check: 0.0918528 MB needed of 199183.949824 MB available (200000 MB max)
+2/2 linearly independent model states
+Build + diag H matrix LASSI symmetry block 1
+['neleca', 'nelecb', 'irrep'] = (4, 4, 0)
+(1 rootspaces; 1 states)
+Build + diag H matrix LASSI symmetry block 2
+['neleca', 'nelecb', 'irrep'] = (4, 3, 0)
+(2 rootspaces; 2 states)
+LASSI op_o0 memory check: 0.0918528 MB needed of 199183.949824 MB available (200000 MB max)
+2/2 linearly independent model states
+LASSI eigenvalues (5 total):
+ ix            Energy  <S**2>  Neleca  Nelecb  Wfnsym
+  0     -3.6215633219   0.000       4       4       A
+  1     -3.4749759948   0.750       5       4       A
+  2     -3.3995774446   0.750       4       3       A
+  3     -3.2710756222   0.750       4       3       A
+  4     -3.2586481014   0.750       5       4       A
