@@ -1,0 +1,13 @@
+# Ignore log files
+*.log
+*.out
+
+# Ignore compiled binaries
+*.exe
+*.dll
+*.so
+
+# Ignore the build directory
+build/
+__pycache__/
+
