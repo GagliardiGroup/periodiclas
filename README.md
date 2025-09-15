@@ -12,4 +12,4 @@ pbc/ contains the code to reproduce periodic examples (hydrogen chain, polyactet
 2. PySCF (https://github.com/pyscf/pyscf.git)
 
 # Acknowledgments
-This work is supported by the U.S. Department of Energy, Office of Science, National Quantum Information Science Research Centers and as part of the Computational Chemical Sciences Program, under Award DE-SC0023382, funded by the U.S. Department of Energy,537Office of Basic Energy Sciences, Chemical Sciences, Geosciences, and Biosciences Division.
+This work is supported by the U.S. Department of Energy, Office of Science, National Quantum Information Science Research Centers and as part of the Computational Chemical Sciences Program, under Award DE-SC0023382, funded by the U.S. Department of Energy, Office of Basic Energy Sciences, Chemical Sciences, Geosciences, and Biosciences Division.
